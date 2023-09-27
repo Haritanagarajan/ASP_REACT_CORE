@@ -10,7 +10,7 @@ using VehicleManagement.Models;
 
 namespace VehicleManagement.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class UsersController : ControllerBase
     {
@@ -86,14 +86,21 @@ namespace VehicleManagement.Controllers
         [HttpPost]
         public async Task<ActionResult<Vuser>> PostVuser(Vuser vuser)
         {
-          if (_context.Vusers == null)
-          {
-              return Problem("Entity set 'VehicleManagementContext.Vusers'  is null.");
-          }
+            vuser.Vcreated = DateTime.Now;  
+            vuser.VlastLoginDate = DateTime.Now;
             _context.Vusers.Add(vuser);
-            await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetVuser", new { id = vuser.Vuserid }, vuser);
+            try
+            {
+                await _context.SaveChangesAsync();
+
+            }
+            catch(Exception)
+            {
+                BadRequest("Error in Posting the details");
+            }
+           
+            return Ok();
         }
 
         // DELETE: api/Users/5
@@ -122,18 +129,18 @@ namespace VehicleManagement.Controllers
         }
 
 
-        [HttpPost("validate")]
-       
-        public async Task<ActionResult<IEnumerable<ValidateUserscs>>> ValidateUser(string username,string password)
+        [HttpPost]
+        public async Task<ActionResult<IEnumerable<ValidateUserscs>>> ValidateUser(ValidateCheck validate)
         {
             var result = await _context.ValidateUserscs
                 .FromSqlRaw("[dbo].[Validate_Users] @Username, @Password",
-                    new SqlParameter("Username", username),
-                    new SqlParameter("Password", password))
+                    new SqlParameter("Username", validate.vusername),
+                    new SqlParameter("Password", validate.vpassword))
                 .ToListAsync();
 
             if (result == null)
             {
+
                 return NotFound();
             }
 
