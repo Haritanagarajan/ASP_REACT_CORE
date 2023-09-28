@@ -7,5 +7,6 @@ namespace VehicleManagement.Models
         [Key]
         public Nullable<int> VUserid { get; set; }
         public string? Roles { get; set; }
+
     }
 }
