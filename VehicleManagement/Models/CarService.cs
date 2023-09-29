@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace VehicleManagement.Models;
 
 public partial class CarService
 {
-    [Key]
-
     public int Serviceid { get; set; }
 
     public int? Carid { get; set; }

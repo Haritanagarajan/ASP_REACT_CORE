@@ -1,98 +1,77 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
+using Octokit.Internal;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using VehicleManagement.Models;
 using VehicleManagement.Models.CarBrands;
 
 namespace VehicleManagement.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class CarBrandsController : ControllerBase
     {
         private readonly VehicleManagementContext _context;
+
+        //public static IWebHostEnvironment _environment;
+
 
         public CarBrandsController(VehicleManagementContext context)
         {
             _context = context;
         }
 
-        // private ICarBrand _ICarBrand;
+    //    [HttpPost, DisableRequestSizeLimit]
+    //    private IActionResult Upload()
+    //    {
+    //        Response res = new Response();
+    //        try
+    //        {
+    //            var file = Request.Form.Files[0];
+    //            var folderName = Path.Combine("wwwroot", "Assets");
+    //            var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
 
-        //public CarBrandsController()
-        //{
-        //    this._ICarBrand = new CarBrandRepo(new VehicleManagementContext());
-        //}
+    //            if (file.Length > 0)
+    //            {
+    //                var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+    //                var fullPath = Path.Combine(pathToSave, fileName);
+    //                var dbPath = Path.Combine(folderName, fileName);
 
-        // GET: api/CarBrands
-        [HttpGet]
-        //public async Task<ActionResult<IEnumerable<CarBrand>>> ListMethod()
-        //{
+    //                using (var stream = new FileStream(fullPath, FileMode.Create))
+    //                {
+    //                    file.CopyTo(stream);
+    //                }
+    //                return Ok(new { dbPath });
+    //            }
+    //            else
+    //            {
+    //                return BadRequest();
+    //            }
 
-        //    var list = _ICarBrand.GetCarBrand();
+    //        }
+    //        catch (Exception ex)
+    //        {
+    //            res.Message = ex.Message;
+    //        }
+    //        return Ok(res);
+    //    }
 
-        //    return Ok(list);
-        //}
-
-
-        public async Task<ActionResult<IEnumerable<CarBrand>>> GetVusers()
-        {
-            if (_context.CarBrands == null)
-            {
-                return NotFound();
-            }
-            return await _context.CarBrands.ToListAsync();
-        }
-
-        // GET: api/CarBrands/5
-        //[HttpGet("{id}")]
-        //public ActionResult Get(int id)
-        //{
-
-        //    var carBrand = _ICarBrand.GetMethod(id);
-
-        //    return Ok(carBrand);
-        //}
-
-
-
-
-        // PUT: api/CarBrands/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPut("{id}")]
-        //public IActionResult Edit(CarBrand carBrand)
-        //{
-
-        //    _ICarBrand.UpdateBrand(carBrand);
-        //    _ICarBrand.SaveChanges();   
-        //    return Ok();
-        //}
-
-        // POST: api/CarBrands
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPost]
-        //public  IActionResult Create(CarBrand carBrand)
-        //{
-
-        //    _ICarBrand.InsertBrand(carBrand);
-        //     _ICarBrand.SaveChanges();
-
-        //    return CreatedAtAction("GetMthod", new { id = carBrand.Brandid }, carBrand);
-        //}
-
-
-        // DELETE: api/CarBrands/5
-        //[HttpDelete("{id}")]
-        //public  IActionResult Delete(int id)
-        //{
-        //    _ICarBrand.DeletBrand(id);
-        //    _ICarBrand.SaveChanges();
-        //    return Ok();
-        //}
+    //    [HttpGet]
+    //    public async Task<ActionResult<IEnumerable<CarBrand>>> GetCarBrand()
+    //    {
+    //        if (_context.CarBrands == null)
+    //        {
+    //            return NotFound();
+    //        }
+    //        return await _context.CarBrands.ToListAsync();
+    //    }
 
 
     }

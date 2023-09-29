@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -53,8 +55,17 @@ builder.Services.AddDbContext<VehicleManagementContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("mvcConnection")));
 
 
-var app = builder.Build();
 
+//image
+builder.Services.Configure<FormOptions>(o =>
+{
+    o.ValueLengthLimit = int.MaxValue;
+    o.MultipartBodyLengthLimit = int.MaxValue;
+    o.MemoryBufferThreshold = int.MaxValue;
+});
+
+
+var app = builder.Build();
 
 
 
@@ -85,5 +96,17 @@ app.UseAuthorization();
 app.UseCors("ReactAccess");
 
 app.MapControllers();
+
+app.UseStaticFiles();
+
+//image path
+
+app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")),
+    RequestPath = new PathString("/wwwroot")
+});
+
 
 app.Run();

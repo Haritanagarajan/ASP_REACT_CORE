@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace VehicleManagement.Models;
 
 public partial class Vuser
 {
- 
-    [Key]
     public int Vuserid { get; set; }
 
     public string? Vusername { get; set; }

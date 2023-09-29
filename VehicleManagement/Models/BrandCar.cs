@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace VehicleManagement.Models;
 
 public partial class BrandCar
 {
-    [Key]
     public int Carid { get; set; }
 
     public int? Brandid { get; set; }
@@ -15,7 +13,7 @@ public partial class BrandCar
 
     public decimal? AddAmount { get; set; }
 
-    public byte[]? CarImage { get; set; }
+    public string? CarImage { get; set; }
 
     public virtual CarBrand? Brand { get; set; }
 

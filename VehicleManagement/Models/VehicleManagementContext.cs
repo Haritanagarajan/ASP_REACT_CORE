@@ -28,13 +28,11 @@ public partial class VehicleManagementContext : DbContext
     public virtual DbSet<Vrole> Vroles { get; set; }
 
     public virtual DbSet<Vuser> Vusers { get; set; }
+    public virtual DbSet<ValidateUserscs> ValidateUserscs { get; set; }
 
-    public DbSet<ValidateUserscs> ValidateUserscs { get; set; }
-
-
-//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-//        => optionsBuilder.UseSqlServer("Server=DESKTOP-54BLE96\\SQLEXPRESS2019;Database=VehicleManagement;Trusted_Connection=True;TrustServerCertificate=True;");
+    //    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+    //        => optionsBuilder.UseSqlServer("Server=DESKTOP-54BLE96\\SQLEXPRESS2019;Database=VehicleManagement;Trusted_Connection=True;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -43,6 +41,7 @@ public partial class VehicleManagementContext : DbContext
             entity.HasKey(e => e.Carid).HasName("PK__BrandCar__68A1300627D5A34C");
 
             entity.Property(e => e.AddAmount).HasColumnType("smallmoney");
+            entity.Property(e => e.CarImage).IsUnicode(false);
             entity.Property(e => e.CarName)
                 .HasMaxLength(100)
                 .IsUnicode(false);
@@ -61,6 +60,7 @@ public partial class VehicleManagementContext : DbContext
             entity.Property(e => e.BrandName)
                 .HasMaxLength(60)
                 .IsUnicode(false);
+            entity.Property(e => e.BranndImage).IsUnicode(false);
         });
 
         modelBuilder.Entity<CarDetail>(entity =>
@@ -98,6 +98,7 @@ public partial class VehicleManagementContext : DbContext
 
             entity.ToTable("CarFuel");
 
+            entity.Property(e => e.FuelImage).IsUnicode(false);
             entity.Property(e => e.FuelName)
                 .HasMaxLength(60)
                 .IsUnicode(false);
