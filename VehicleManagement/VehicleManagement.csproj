@@ -7,6 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\cherry" />
+    <None Include="wwwroot\Maruthi" />
+    <None Include="wwwroot\New" />
+    <None Include="wwwroot\sdsddw" />
+    <None Include="wwwroot\tata" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.22" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Cors" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.21" />
@@ -19,10 +27,6 @@
     <PackageReference Include="Octokit" Version="8.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.32.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="wwwroot\Assets\" />
   </ItemGroup>
 
 </Project>

@@ -50,6 +50,10 @@ builder.Services.AddCors(options =>
         });
 });
 
+
+
+
+
 //Configure the Sql Server Database ConnectionStrings
 builder.Services.AddDbContext<VehicleManagementContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("mvcConnection")));

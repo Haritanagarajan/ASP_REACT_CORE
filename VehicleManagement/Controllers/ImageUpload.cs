@@ -12,26 +12,26 @@ namespace VehicleManagement.Controllers
     [ApiController]
     public class ImageUpload : ControllerBase
     {
-        private readonly VehicleManagementContext _context ;
-      
+        private readonly VehicleManagementContext _context;
+
 
         public static IWebHostEnvironment _environment;
-        public ImageUpload(IWebHostEnvironment environment,VehicleManagementContext context)
+
+        public ImageUpload(IWebHostEnvironment environment, VehicleManagementContext context)
         {
             _environment = environment;
             _context = context;
         }
 
         [HttpPost]
-        public Task<Common> Post([FromBody]CarBrandUpload objFile)
+        public IActionResult Post( CarBrandUpload objFile)
         {
-            Common obj = new Common();
-            obj._fileAPI = new CarBrandUpload();
+            CarBrandUpload obj = new CarBrandUpload();
 
             try
             {
-                obj._fileAPI.Brandid1 = objFile.Brandid1;
-                obj._fileAPI.BranndImage1 = "\\Assets\\" + objFile.files.FileName;
+                obj.Brandid = objFile.Brandid;
+                obj.BranndImage = "\\Assets\\" + objFile.files.FileName;
                 if (objFile.files.Length > 0)
                 {
                     if (!Directory.Exists(_environment.WebRootPath + "\\Assets"))
@@ -43,21 +43,20 @@ namespace VehicleManagement.Controllers
                         string imagePath = _environment.WebRootPath + "\\Assets\\" + objFile.files.FileName;
                         objFile.files.CopyTo(filestream);
                         filestream.Flush();
-                        objFile.BranndImage1=imagePath;
+                        objFile.BranndImage = imagePath;
 
                         CarBrand car = new CarBrand
                         {
-                           Brandid = objFile.Brandid1,
-                           BrandName = objFile.BrandName1,
-                           BranndImage = objFile.BranndImage1
+                            BrandName = objFile.BrandName,
+                            BranndImage = objFile.BranndImage
                         };
-                       
+
                         try
                         {
                             _context.CarBrands.Add(car);
                             _context.SaveChanges();
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             BadRequest(ex.Message);
                         }
@@ -68,7 +67,7 @@ namespace VehicleManagement.Controllers
             {
                 throw;
             }
-            return Task.FromResult(obj);
+            return Ok();
         }
     }
 }
