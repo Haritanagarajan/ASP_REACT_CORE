@@ -34,7 +34,7 @@ namespace VehicleManagement.Controllers
             {
                 Brandid = x.Brandid,
                 BrandName = x.BrandName,
-                BranndImage = String.Format("{0}://{1}{2}/Images/{3}", Request.Scheme, Request.Host, Request.PathBase, x.BranndImage),
+                BranndImage = x.BranndImage,
                 //ImageSrc = String.Format("{0}://{1}{2}/Images/{3}", Request.Scheme, Request.Host, Request.PathBase, x.BranndImage)
             })
                 .ToListAsync();
