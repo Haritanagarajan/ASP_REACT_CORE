@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Humanizer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -33,21 +34,30 @@ namespace VehicleManagement.Controllers
 
         // GET: api/BrandCars/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<BrandCar>> GetBrandCar(int id)
-        {
-          if (_context.BrandCars == null)
-          {
-              return NotFound();
-          }
-            var brandCar = await _context.BrandCars.FindAsync(id);
 
-            if (brandCar == null)
+        public async Task<ActionResult<IEnumerable<BrandCar>>> GetBrandCar(int id)
+        {
+            if (_context.BrandCars == null)
             {
                 return NotFound();
             }
 
-            return brandCar;
+            List<BrandCar> cars  = await _context.BrandCars.Where(car => car.Brandid == id).ToListAsync();
+
+            if (cars == null || cars.Count == 0)
+            {
+                return NotFound();
+            }
+
+            return cars;
         }
+      
+
+
+
+
+
+
 
         // PUT: api/BrandCars/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

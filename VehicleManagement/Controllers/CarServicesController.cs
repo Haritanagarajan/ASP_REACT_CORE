@@ -9,7 +9,7 @@ using VehicleManagement.Models;
 
 namespace VehicleManagement.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class CarServicesController : ControllerBase
     {
@@ -24,31 +24,47 @@ namespace VehicleManagement.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CarService>>> GetCarServices()
         {
-          if (_context.CarServices == null)
-          {
-              return NotFound();
-          }
+            if (_context.CarServices == null)
+            {
+                return NotFound();
+            }
             return await _context.CarServices.ToListAsync();
         }
 
 
-        // GET: api/CarServices/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<CarService>> GetCarService(int id)
-        {
-          if (_context.CarServices == null)
-          {
-              return NotFound();
-          }
-            var carService = await _context.CarServices.FindAsync(id);
 
-            if (carService == null)
+
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<IEnumerable<CarService>>> GetCarService(int id)
+        {
+            if (_context.CarServices == null)
             {
                 return NotFound();
             }
 
-            return carService;
+            var addAmount = _context.BrandCars
+                .Select(brandCar => brandCar.AddAmount)
+                .FirstOrDefault();
+
+            List<CarService> service = await _context.CarServices
+                .Where(carService => carService.Carid == id)
+                .ToListAsync();
+
+            if (service == null || service.Count == 0)
+            {
+                return NotFound();
+            }
+
+            // Add addAmount to the servicecost for each CarService
+            foreach (var carService in service)
+            {
+                carService.Servicecost += addAmount;
+            }
+
+            return service;
         }
+
 
         // PUT: api/CarServices/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -86,10 +102,10 @@ namespace VehicleManagement.Controllers
         [HttpPost]
         public async Task<ActionResult<CarService>> PostCarService(CarService carService)
         {
-          if (_context.CarServices == null)
-          {
-              return Problem("Entity set 'VehicleManagementContext.CarServices'  is null.");
-          }
+            if (_context.CarServices == null)
+            {
+                return Problem("Entity set 'VehicleManagementContext.CarServices'  is null.");
+            }
             _context.CarServices.Add(carService);
             await _context.SaveChangesAsync();
 

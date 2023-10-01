@@ -11,57 +11,55 @@ namespace VehicleManagement.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class CarBrands1Controller : ControllerBase
+    public class CarFuelsController : ControllerBase
     {
         private readonly VehicleManagementContext _context;
 
-        public CarBrands1Controller(VehicleManagementContext context)
+        public CarFuelsController(VehicleManagementContext context)
         {
             _context = context;
         }
 
-        // GET: api/CarBrands1
+        // GET: api/CarFuels
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CarBrand>>> GetCarBrands()
+        public async Task<ActionResult<IEnumerable<CarFuel>>> GetCarFuels()
         {
-          if (_context.CarBrands == null)
+          if (_context.CarFuels == null)
           {
               return NotFound();
           }
-            return await _context.CarBrands.ToListAsync();
+            return await _context.CarFuels.ToListAsync();
         }
 
-        // GET: api/CarBrands1/5
+        // GET: api/CarFuels/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<CarBrand>> GetCarBrand(int id)
+        public async Task<ActionResult<CarFuel>> GetCarFuel(int id)
         {
-          if (_context.CarBrands == null)
+          if (_context.CarFuels == null)
           {
               return NotFound();
           }
+            var carFuel = await _context.CarFuels.FindAsync(id);
 
-          
-            var carBrand = await _context.CarBrands.FindAsync(id);
-
-            if (carBrand == null)
+            if (carFuel == null)
             {
                 return NotFound();
             }
 
-            return carBrand;
+            return carFuel;
         }
 
-        // PUT: api/CarBrands1/5
+        // PUT: api/CarFuels/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCarBrand(int id, CarBrand carBrand)
+        public async Task<IActionResult> PutCarFuel(int id, CarFuel carFuel)
         {
-            if (id != carBrand.Brandid)
+            if (id != carFuel.Fuelid)
             {
                 return BadRequest();
             }
 
-            _context.Entry(carBrand).State = EntityState.Modified;
+            _context.Entry(carFuel).State = EntityState.Modified;
 
             try
             {
@@ -69,7 +67,7 @@ namespace VehicleManagement.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!CarBrandExists(id))
+                if (!CarFuelExists(id))
                 {
                     return NotFound();
                 }
@@ -82,44 +80,44 @@ namespace VehicleManagement.Controllers
             return NoContent();
         }
 
-        // POST: api/CarBrands1
+        // POST: api/CarFuels
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<CarBrand>> PostCarBrand(CarBrand carBrand)
+        public async Task<ActionResult<CarFuel>> PostCarFuel(CarFuel carFuel)
         {
-          if (_context.CarBrands == null)
+          if (_context.CarFuels == null)
           {
-              return Problem("Entity set 'VehicleManagementContext.CarBrands'  is null.");
+              return Problem("Entity set 'VehicleManagementContext.CarFuels'  is null.");
           }
-            _context.CarBrands.Add(carBrand);
+            _context.CarFuels.Add(carFuel);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCarBrand", new { id = carBrand.Brandid }, carBrand);
+            return CreatedAtAction("GetCarFuel", new { id = carFuel.Fuelid }, carFuel);
         }
 
-        // DELETE: api/CarBrands1/5
+        // DELETE: api/CarFuels/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCarBrand(int id)
+        public async Task<IActionResult> DeleteCarFuel(int id)
         {
-            if (_context.CarBrands == null)
+            if (_context.CarFuels == null)
             {
                 return NotFound();
             }
-            var carBrand = await _context.CarBrands.FindAsync(id);
-            if (carBrand == null)
+            var carFuel = await _context.CarFuels.FindAsync(id);
+            if (carFuel == null)
             {
                 return NotFound();
             }
 
-            _context.CarBrands.Remove(carBrand);
+            _context.CarFuels.Remove(carFuel);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool CarBrandExists(int id)
+        private bool CarFuelExists(int id)
         {
-            return (_context.CarBrands?.Any(e => e.Brandid == id)).GetValueOrDefault();
+            return (_context.CarFuels?.Any(e => e.Fuelid == id)).GetValueOrDefault();
         }
     }
 }

@@ -9,11 +9,19 @@ public partial class CarDetail
 
     public int? Vuserid { get; set; }
 
+    public string? VuserName { get; set; }
+
     public int? Brandid { get; set; }
+
+    public string? BrandImage { get; set; }
 
     public int? Carid { get; set; }
 
+    public string? CarImage { get; set; }
+
     public int? Fuelid { get; set; }
+
+    public string? FuelImage { get; set; }
 
     public int? Serviceid { get; set; }
 

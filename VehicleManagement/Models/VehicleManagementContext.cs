@@ -28,7 +28,9 @@ public partial class VehicleManagementContext : DbContext
     public virtual DbSet<Vrole> Vroles { get; set; }
 
     public virtual DbSet<Vuser> Vusers { get; set; }
+
     public virtual DbSet<ValidateUserscs> ValidateUserscs { get; set; }
+
 
     //    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
@@ -65,31 +67,37 @@ public partial class VehicleManagementContext : DbContext
 
         modelBuilder.Entity<CarDetail>(entity =>
         {
-            entity.HasKey(e => e.DetailsId).HasName("PK__CarDetai__BAC8628CCAB405E5");
+            entity.HasKey(e => e.DetailsId).HasName("PK__CarDetai__BAC8628C751B2746");
 
+            entity.Property(e => e.BrandImage).IsUnicode(false);
+            entity.Property(e => e.CarImage).IsUnicode(false);
             entity.Property(e => e.CreatedDate).HasColumnType("datetime");
             entity.Property(e => e.DueDate).HasColumnType("datetime");
+            entity.Property(e => e.FuelImage).IsUnicode(false);
+            entity.Property(e => e.VuserName)
+                .IsUnicode(false)
+                .HasColumnName("VUserName");
             entity.Property(e => e.Vuserid).HasColumnName("VUserid");
 
             entity.HasOne(d => d.Brand).WithMany(p => p.CarDetails)
                 .HasForeignKey(d => d.Brandid)
-                .HasConstraintName("FK__CarDetail__Brand__47DBAE45");
+                .HasConstraintName("FK__CarDetail__Brand__5DCAEF64");
 
             entity.HasOne(d => d.Car).WithMany(p => p.CarDetails)
                 .HasForeignKey(d => d.Carid)
-                .HasConstraintName("FK__CarDetail__Carid__48CFD27E");
+                .HasConstraintName("FK__CarDetail__Carid__5EBF139D");
 
             entity.HasOne(d => d.Fuel).WithMany(p => p.CarDetails)
                 .HasForeignKey(d => d.Fuelid)
-                .HasConstraintName("FK__CarDetail__Fueli__49C3F6B7");
+                .HasConstraintName("FK__CarDetail__Fueli__5FB337D6");
 
             entity.HasOne(d => d.Service).WithMany(p => p.CarDetails)
                 .HasForeignKey(d => d.Serviceid)
-                .HasConstraintName("FK__CarDetail__Servi__4AB81AF0");
+                .HasConstraintName("FK__CarDetail__Servi__60A75C0F");
 
             entity.HasOne(d => d.Vuser).WithMany(p => p.CarDetails)
                 .HasForeignKey(d => d.Vuserid)
-                .HasConstraintName("FK__CarDetail__VUser__46E78A0C");
+                .HasConstraintName("FK__CarDetail__VUser__5CD6CB2B");
         });
 
         modelBuilder.Entity<CarFuel>(entity =>
