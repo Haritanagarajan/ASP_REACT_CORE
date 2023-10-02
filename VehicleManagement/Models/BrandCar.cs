@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VehicleManagement.Models;
 
@@ -14,6 +15,14 @@ public partial class BrandCar
     public decimal? AddAmount { get; set; }
 
     public string? CarImage { get; set; }
+
+
+    [NotMapped]
+    public IFormFile? ImageFile { get; set; }
+
+
+    [NotMapped]
+    public string? ImageSrc { get; set; }
 
     public virtual CarBrand? Brand { get; set; }
 

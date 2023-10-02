@@ -14,13 +14,13 @@ namespace VehicleManagement.Controllers
     public class CarBrands1Controller : ControllerBase
     {
         private readonly VehicleManagementContext _context;
-        //
+       
         private readonly IWebHostEnvironment _hostEnvironment;
 
         public CarBrands1Controller(VehicleManagementContext context, IWebHostEnvironment hostEnvironment)
         {
             _context = context;
-            //
+           
             this._hostEnvironment = hostEnvironment;
 
         }
@@ -35,7 +35,7 @@ namespace VehicleManagement.Controllers
                 Brandid = x.Brandid,
                 BrandName = x.BrandName,
                 BranndImage = x.BranndImage,
-                //ImageSrc = String.Format("{0}://{1}{2}/Images/{3}", Request.Scheme, Request.Host, Request.PathBase, x.BranndImage)
+                ImageSrc = String.Format("{0}://{1}{2}/Images/{3}", Request.Scheme, Request.Host, Request.PathBase, x.BranndImage)
             })
                 .ToListAsync();
         }

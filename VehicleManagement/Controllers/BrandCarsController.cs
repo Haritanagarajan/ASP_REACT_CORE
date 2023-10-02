@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VehicleManagement.Models;
+using VehicleManagement.Models.CarBrands;
 
 namespace VehicleManagement.Controllers
 {
@@ -16,20 +17,35 @@ namespace VehicleManagement.Controllers
     {
         private readonly VehicleManagementContext _context;
 
-        public BrandCarsController(VehicleManagementContext context)
+        private readonly IWebHostEnvironment _hostEnvironment;
+
+        public BrandCarsController(VehicleManagementContext context, IWebHostEnvironment hostEnvironment)
         {
             _context = context;
+            this._hostEnvironment = hostEnvironment;
+
         }
 
         // GET: api/BrandCars
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BrandCar>>> GetBrandCars()
         {
-          if (_context.BrandCars == null)
-          {
-              return NotFound();
-          }
-            return await _context.BrandCars.ToListAsync();
+            //if (_context.BrandCars == null)
+            //{
+            //    return NotFound();
+            //}
+            //  return await _context.BrandCars.ToListAsync();
+
+            return await _context.BrandCars.Select(x => new BrandCar()
+            {
+                Carid = x.Carid,
+                Brandid = x.Brandid,
+                CarName = x.CarName,
+                AddAmount = x.AddAmount,
+                CarImage = x.CarImage,
+                ImageSrc = String.Format("{0}://{1}{2}/Images/{3}", Request.Scheme, Request.Host, Request.PathBase, x.CarImage)
+            })
+                .ToListAsync();
         }
 
         // GET: api/BrandCars/5
@@ -54,19 +70,21 @@ namespace VehicleManagement.Controllers
       
 
 
-
-
-
-
-
         // PUT: api/BrandCars/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBrandCar(int id, BrandCar brandCar)
+        public async Task<IActionResult> PutBrandCar(int id, [FromForm] BrandCar brandCar)
+        
         {
             if (id != brandCar.Carid)
             {
                 return BadRequest();
+            }
+
+            if (brandCar.ImageFile != null)
+            {
+                //DeleteImage(carBrand.BranndImage);
+                brandCar.CarImage = await SaveImage(brandCar.ImageFile);
             }
 
             _context.Entry(brandCar).State = EntityState.Modified;
@@ -93,16 +111,24 @@ namespace VehicleManagement.Controllers
         // POST: api/BrandCars
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<BrandCar>> PostBrandCar(BrandCar brandCar)
+        public async Task<ActionResult<BrandCar>> PostBrandCar([FromForm] BrandCar brandCar)
         {
-          if (_context.BrandCars == null)
-          {
-              return Problem("Entity set 'VehicleManagementContext.BrandCars'  is null.");
-          }
+            //if (_context.BrandCars == null)
+            //{
+            //    return Problem("Entity set 'VehicleManagementContext.BrandCars'  is null.");
+            //}
+            //  _context.BrandCars.Add(brandCar);
+            //  await _context.SaveChangesAsync();
+
+            //  return CreatedAtAction("GetBrandCar", new { id = brandCar.Carid }, brandCar);
+
+            brandCar.CarImage = await SaveImage(brandCar.ImageFile);
             _context.BrandCars.Add(brandCar);
             await _context.SaveChangesAsync();
+            return StatusCode(201);
 
-            return CreatedAtAction("GetBrandCar", new { id = brandCar.Carid }, brandCar);
+
+
         }
 
         // DELETE: api/BrandCars/5
@@ -119,15 +145,41 @@ namespace VehicleManagement.Controllers
                 return NotFound();
             }
 
+            DeleteImage(brandCar.CarImage);
             _context.BrandCars.Remove(brandCar);
+
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(brandCar);
         }
 
         private bool BrandCarExists(int id)
         {
             return (_context.BrandCars?.Any(e => e.Carid == id)).GetValueOrDefault();
+        }
+
+
+
+        [NonAction]
+        public void DeleteImage(string imageName)
+        {
+            var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", imageName);
+            if (System.IO.File.Exists(imagePath))
+                System.IO.File.Delete(imagePath);
+        }
+
+
+        [NonAction]
+        public async Task<string> SaveImage(IFormFile imageFile)
+        {
+            string imageName = new String(Path.GetFileNameWithoutExtension(imageFile.FileName).Take(10).ToArray()).Replace(' ', '-');
+            imageName = imageName + DateTime.Now.ToString("yymmssfff") + Path.GetExtension(imageFile.FileName);
+            var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", imageName);
+            using (var fileStream = new FileStream(imagePath, FileMode.Create))
+            {
+                await imageFile.CopyToAsync(fileStream);
+            }
+            return imageName;
         }
     }
 }
