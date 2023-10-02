@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VehicleManagement.Models;
+using VehicleManagement.Models.CarBrands;
 
 namespace VehicleManagement.Controllers
 {
@@ -102,14 +103,14 @@ namespace VehicleManagement.Controllers
         [HttpPost]
         public async Task<ActionResult<CarService>> PostCarService(CarService carService)
         {
-            if (_context.CarServices == null)
-            {
-                return Problem("Entity set 'VehicleManagementContext.CarServices'  is null.");
-            }
+        //    if (_context.CarServices == null)
+        //    {
+        //        return Problem("Entity set 'VehicleManagementContext.CarServices'  is null.");
+        //    }
             _context.CarServices.Add(carService);
             await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetCarService", new { id = carService.Serviceid }, carService);
+            return StatusCode(201);
+            //return CreatedAtAction("GetCarService", new { id = carService.Serviceid }, carService);
         }
 
         // DELETE: api/CarServices/5

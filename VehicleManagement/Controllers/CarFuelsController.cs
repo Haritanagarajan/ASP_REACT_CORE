@@ -29,11 +29,7 @@ namespace VehicleManagement.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CarFuel>>> GetCarFuels()
         {
-            //if (_context.CarFuels == null)
-            //{
-            //    return NotFound();
-            //}
-            //  return await _context.CarFuels.ToListAsync();
+          
 
             return await _context.CarFuels.Select(x => new CarFuel()
             {
@@ -45,7 +41,6 @@ namespace VehicleManagement.Controllers
                .ToListAsync();
         }
 
-        // GET: api/CarFuels/5
         [HttpGet("{id}")]
         public async Task<ActionResult<CarFuel>> GetCarFuel(int id)
         {
@@ -63,7 +58,6 @@ namespace VehicleManagement.Controllers
             return carFuel;
         }
 
-        // PUT: api/CarFuels/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCarFuel(int id,[FromForm] CarFuel carFuel)
@@ -105,14 +99,7 @@ namespace VehicleManagement.Controllers
         [HttpPost]
         public async Task<ActionResult<CarFuel>> PostCarFuel([FromForm]CarFuel carFuel)
         {
-            //if (_context.CarFuels == null)
-            //{
-            //    return Problem("Entity set 'VehicleManagementContext.CarFuels'  is null.");
-            //}
-            //  _context.CarFuels.Add(carFuel);
-            //  await _context.SaveChangesAsync();
-
-            //  return CreatedAtAction("GetCarFuel", new { id = carFuel.Fuelid }, carFuel);
+          
 
             carFuel.FuelImage = await SaveImage(carFuel.ImageFile);
             _context.CarFuels.Add(carFuel);
