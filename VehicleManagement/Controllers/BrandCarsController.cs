@@ -46,16 +46,57 @@ namespace VehicleManagement.Controllers
         }
 
         // GET: api/BrandCars/5
-        [HttpGet("{id}")]
+        //[HttpGet("{id}")]
 
-        public async Task<ActionResult<IEnumerable<BrandCar>>> GetBrandCar(int id)
+        //public async Task<ActionResult<IEnumerable<BrandCar>>> GetBrandCar(int id)
+        //{
+
+        //    if (_context.BrandCars == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    List<BrandCar> cars = await _context.BrandCars.Where(car => car.Brandid == id).ToListAsync();
+
+        //    if (cars == null || cars.Count == 0)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return await _context.BrandCars.Select(x => new BrandCar()
+        //    {
+        //        Carid = x.Carid,
+        //        Brandid = x.Brandid,
+        //        CarName = x.CarName,
+        //        AddAmount = x.AddAmount,
+        //        CarImage = x.CarImage,
+        //        ImageSrc = String.Format("{0}://{1}{2}/Images/{3}", Request.Scheme, Request.Host, Request.PathBase, x.CarImage)
+        //    })
+        //       .ToListAsync();
+
+        //    return cars;
+        //}
+        // GET: api/BrandCars/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<List<BrandCar>>> GetBrandCar(int id)
         {
             if (_context.BrandCars == null)
             {
                 return NotFound();
             }
 
-            List<BrandCar> cars = await _context.BrandCars.Where(car => car.Brandid == id).ToListAsync();
+            List<BrandCar> cars = await _context.BrandCars
+                .Where(car => car.Brandid == id)
+                .Select(x => new BrandCar()
+                {
+                    Carid = x.Carid,
+                    Brandid = x.Brandid,
+                    CarName = x.CarName,
+                    AddAmount = x.AddAmount,
+                    CarImage = x.CarImage,
+                    ImageSrc = String.Format("{0}://{1}{2}/Images/{3}", Request.Scheme, Request.Host, Request.PathBase, x.CarImage)
+                })
+                .ToListAsync();
 
             if (cars == null || cars.Count == 0)
             {
@@ -64,6 +105,7 @@ namespace VehicleManagement.Controllers
 
             return cars;
         }
+
 
 
 
