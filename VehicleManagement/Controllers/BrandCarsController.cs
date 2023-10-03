@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Humanizer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,7 @@ using VehicleManagement.Models.CarBrands;
 namespace VehicleManagement.Controllers
 {
     [Route("api/[controller]/[action]")]
+    //[Authorize(Roles = "Admin")]
     [ApiController]
     public class BrandCarsController : ControllerBase
     {
@@ -30,11 +32,6 @@ namespace VehicleManagement.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BrandCar>>> GetBrandCars()
         {
-            //if (_context.BrandCars == null)
-            //{
-            //    return NotFound();
-            //}
-            //  return await _context.BrandCars.ToListAsync();
 
             return await _context.BrandCars.Select(x => new BrandCar()
             {
@@ -58,7 +55,7 @@ namespace VehicleManagement.Controllers
                 return NotFound();
             }
 
-            List<BrandCar> cars  = await _context.BrandCars.Where(car => car.Brandid == id).ToListAsync();
+            List<BrandCar> cars = await _context.BrandCars.Where(car => car.Brandid == id).ToListAsync();
 
             if (cars == null || cars.Count == 0)
             {
@@ -67,14 +64,14 @@ namespace VehicleManagement.Controllers
 
             return cars;
         }
-      
+
 
 
         // PUT: api/BrandCars/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBrandCar(int id, [FromForm] BrandCar brandCar)
-        
+
         {
             if (id != brandCar.Carid)
             {

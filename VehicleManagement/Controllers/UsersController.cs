@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using VehicleManagement.Models;
 
 namespace VehicleManagement.Controllers
@@ -172,7 +173,10 @@ namespace VehicleManagement.Controllers
                     Roles = result[0].Roles
                 };
 
+                HttpContext.Session.SetString("SessionUser",JsonConvert.SerializeObject(response));
 
+                //var sessionuser = JsonConvert.DeserializeObject<Vuser>(HttpContext.Session.GetString("SessionUser"))
+                
                 return Ok(response);
 
             }
@@ -181,63 +185,68 @@ namespace VehicleManagement.Controllers
 
 
 
-        //[HttpPost("getToken")]
+        [HttpPost("getToken")]
 
-        //public IActionResult TokenGenerate([FromBody] JwtCheck jwtcheck)
-        //{
-        //    var log = _context.Vusers.FirstOrDefault(x => x.Vusername == jwtcheck.UserName && x.Vemail == jwtcheck.Email);
+        public IActionResult TokenGenerate([FromBody] JwtCheck jwtcheck)
+        {
+            var log = _context.Vusers.FirstOrDefault(x => x.Vemail == jwtcheck.Email);
 
-        //    if (log == null)
-        //    {
-        //        return BadRequest(new Models.Response { Status = "Invalid", Message = "Invalid User." });
-        //    }
+            if (log == null)
+            {
+                return BadRequest(new Models.Response { Status = "Invalid", Message = "Invalid User." });
+            }
 
-        //    else
-        //    {
-        //        int? roleid = log.Vroleid;
+            else
+            {
+                int? roleid = log.Vroleid;
 
-        //        var Roles = "no role";
+                var Roles = "no role";
 
-        //        if (roleid == 1)
-        //        {
-        //            Roles = "Admin";
-        //        }
-        //        if (roleid == 2)
-        //        {
-        //            Roles = "Customer";
-        //        }
-              
-        //        if (roleid == null)
-        //        {
-        //            return BadRequest("User does not have a role.");
-        //        }
+                if (roleid == 1)
+                {
+                    Roles = "Admin";
+                }
+                if (roleid == 2)
+                {
+                    Roles = "Customer";
+                }
+                
+                if (roleid == null)
+                {
+                    return BadRequest("User does not have a role.");
+                }
 
-        //        var key = "Yh2k7QSu4l8CZg5p6X3Pna9L0Miy4D3Bvt0JVr87UcOj69Kqw5R2Nmf4FWs0bn";
-        //        var creds = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)), SecurityAlgorithms.HmacSha256);
+                var key = "Yh2k7QSu4l8CZg5p6X3Pna9L0Miy4D3Bvt0JVr87UcOj69Kqw5R2Nmf4FWs0bn";
+                var creds = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)), SecurityAlgorithms.HmacSha256);
 
-        //        var claims = new List<Claim>
-        //      {
-        //           new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-        //           new Claim(ClaimTypes.Role, Roles),
-        //      };
+                var claims = new List<Claim>
+              {
+                   new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                   new Claim(ClaimTypes.Role, Roles),
+              };
 
-        //        var token = new JwtSecurityToken(
-        //            issuer: "JWTAuthenticationServer",
-        //            audience: "JWTServicePostmanClient",
-        //            claims: claims,
-        //            expires: DateTime.Now.AddDays(1),
-        //            signingCredentials: creds);
+                var token = new JwtSecurityToken(
+                    issuer: "JWTAuthenticationServer",
+                    audience: "JWTServicePostmanClient",
+                    claims: claims,
+                    expires: DateTime.Now.AddDays(1),
+                    signingCredentials: creds);
 
 
 
-        //        var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
+                var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
 
-        //        //HttpContext.Session.SetString("JwtToken", jwtToken);
 
-        //        return Ok(new { token = jwtToken });
+                var response = new Models.JwtCheck
+                {
+                    Email= jwtcheck.Email,
+                    Token = jwtToken
+                };
 
-        //    }
-        //}
+                return Ok(response);
 
+            }
+        }
+       
     }
 }
