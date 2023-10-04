@@ -9,12 +9,10 @@ namespace VehicleManagement.Repository
     public class CarServiceRepo : ICarService
     {
         private readonly VehicleManagementContext _context;
-        private readonly IConfiguration _configuration;
 
-        public CarServiceRepo(VehicleManagementContext context, IConfiguration configuration)
+        public CarServiceRepo(VehicleManagementContext context)
         {
             _context = context;
-            _configuration = configuration;
         }
 
         public ActionResult<IEnumerable<CarService>> GetCarServices()
