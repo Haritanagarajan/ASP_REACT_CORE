@@ -9,28 +9,19 @@ public partial class VehicleManagementContext : DbContext
     public VehicleManagementContext()
     {
     }
-
     public VehicleManagementContext(DbContextOptions<VehicleManagementContext> options)
         : base(options)
     {
     }
 
     public virtual DbSet<BrandCar> BrandCars { get; set; }
-
     public virtual DbSet<CarBrand> CarBrands { get; set; }
-
     public virtual DbSet<CarDetail> CarDetails { get; set; }
-
     public virtual DbSet<CarFuel> CarFuels { get; set; }
-
     public virtual DbSet<CarService> CarServices { get; set; }
-
     public virtual DbSet<Vrole> Vroles { get; set; }
-
     public virtual DbSet<Vuser> Vusers { get; set; }
-
     public virtual DbSet<ValidateUserscs> ValidateUserscs { get; set; }
-
 
     //    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
@@ -73,6 +64,9 @@ public partial class VehicleManagementContext : DbContext
             entity.Property(e => e.CarImage).IsUnicode(false);
             entity.Property(e => e.CreatedDate).HasColumnType("datetime");
             entity.Property(e => e.DueDate).HasColumnType("datetime");
+            entity.Property(e => e.Email)
+                .HasMaxLength(100)
+                .IsUnicode(false);
             entity.Property(e => e.FuelImage).IsUnicode(false);
             entity.Property(e => e.VuserName)
                 .IsUnicode(false)

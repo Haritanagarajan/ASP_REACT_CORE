@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VehicleManagement.Models;
-using VehicleManagement.Models.CarBrands;
 
 namespace VehicleManagement.Controllers
 {
@@ -15,7 +14,6 @@ namespace VehicleManagement.Controllers
     public class CarFuelsController : ControllerBase
     {
         private readonly VehicleManagementContext _context;
-
         private readonly IWebHostEnvironment _hostEnvironment;
 
 
@@ -25,12 +23,13 @@ namespace VehicleManagement.Controllers
             this._hostEnvironment = hostEnvironment;
         }
 
-        // GET: api/CarFuels
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CarFuel>>> GetCarFuels()
         {
-          
-
             return await _context.CarFuels.Select(x => new CarFuel()
             {
                 Fuelid = x.Fuelid,
@@ -41,40 +40,45 @@ namespace VehicleManagement.Controllers
                .ToListAsync();
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<CarFuel>> GetCarFuel(int id)
         {
-          if (_context.CarFuels == null)
-          {
-              return NotFound();
-          }
+            if (_context.CarFuels == null)
+            {
+                return NotFound();
+            }
             var carFuel = await _context.CarFuels.FindAsync(id);
-
             if (carFuel == null)
             {
                 return NotFound();
             }
-
             return carFuel;
         }
 
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="carFuel"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCarFuel(int id,[FromForm] CarFuel carFuel)
+        public async Task<IActionResult> PutCarFuel(int id, [FromForm] CarFuel carFuel)
         {
             if (id != carFuel.Fuelid)
             {
                 return BadRequest();
             }
-
             if (carFuel.ImageFile != null)
             {
-                //DeleteImage(carBrand.BranndImage);
                 carFuel.FuelImage = await SaveImage(carFuel.ImageFile);
             }
-
             _context.Entry(carFuel).State = EntityState.Modified;
-
             try
             {
                 await _context.SaveChangesAsync();
@@ -90,17 +94,17 @@ namespace VehicleManagement.Controllers
                     throw;
                 }
             }
-
             return NoContent();
         }
 
-        // POST: api/CarFuels
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="carFuel"></param>
+        /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult<CarFuel>> PostCarFuel([FromForm]CarFuel carFuel)
+        public async Task<ActionResult<CarFuel>> PostCarFuel([FromForm] CarFuel carFuel)
         {
-          
-
             carFuel.FuelImage = await SaveImage(carFuel.ImageFile);
             _context.CarFuels.Add(carFuel);
             await _context.SaveChangesAsync();
@@ -108,7 +112,11 @@ namespace VehicleManagement.Controllers
 
         }
 
-        // DELETE: api/CarFuels/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCarFuel(int id)
         {
@@ -134,7 +142,10 @@ namespace VehicleManagement.Controllers
         }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="imageName"></param>
         [NonAction]
         public void DeleteImage(string imageName)
         {
@@ -144,6 +155,11 @@ namespace VehicleManagement.Controllers
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="imageFile"></param>
+        /// <returns></returns>
         [NonAction]
         public async Task<string> SaveImage(IFormFile imageFile)
         {

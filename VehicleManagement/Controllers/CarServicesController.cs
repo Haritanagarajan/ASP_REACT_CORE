@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using VehicleManagement.Interface;
+using VehicleManagement.IRepository;
 using VehicleManagement.Models;
-using VehicleManagement.Models.CarBrands;
 
 namespace VehicleManagement.Controllers
 {
@@ -14,124 +15,74 @@ namespace VehicleManagement.Controllers
     [ApiController]
     public class CarServicesController : ControllerBase
     {
+        private readonly ICarService _servicerepo;
         private readonly VehicleManagementContext _context;
 
-        public CarServicesController(VehicleManagementContext context)
+        public CarServicesController(ICarService servicerepo)
         {
-            _context = context;
+            _servicerepo = servicerepo;
         }
 
-        // GET: api/CarServices
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CarService>>> GetCarServices()
+        public ActionResult<IEnumerable<CarService>> GetCarServices()
         {
-            if (_context.CarServices == null)
-            {
-                return NotFound();
-            }
-            return await _context.CarServices.ToListAsync();
+            return _servicerepo.GetCarServices();
         }
 
-
-
-
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<IEnumerable<CarService>>> GetCarService(int id)
+        public ActionResult<IEnumerable<CarService>> GetCarService(int id)
         {
-            if (_context.CarServices == null)
-            {
-                return NotFound();
-            }
-
-            var addAmount = _context.BrandCars
-                .Select(brandCar => brandCar.AddAmount)
-                .FirstOrDefault();
-
-            List<CarService> service = await _context.CarServices
-                .Where(carService => carService.Carid == id)
-                .ToListAsync();
-
-            if (service == null || service.Count == 0)
-            {
-                return NotFound();
-            }
-
-            // Add addAmount to the servicecost for each CarService
-            foreach (var carService in service)
-            {
-                carService.Servicecost += addAmount;
-            }
-
-            return service;
+            return  _servicerepo.GetCarService(id);
         }
 
 
-        // PUT: api/CarServices/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="carService"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCarService(int id, CarService carService)
+        public IActionResult PutCarService(int id, CarService carService)
         {
-            if (id != carService.Serviceid)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(carService).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CarServiceExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return _servicerepo.PutCarService(id, carService);
         }
 
-        // POST: api/CarServices
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="carService"></param>
+        /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult<CarService>> PostCarService(CarService carService)
+        public ActionResult<CarService> PostCarService(CarService carService)
         {
-       
-            _context.CarServices.Add(carService);
-            await _context.SaveChangesAsync();
-            return StatusCode(201);
+            return _servicerepo.PostCarService(carService);
         }
 
-        // DELETE: api/CarServices/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCarService(int id)
+        public IActionResult DeleteCarService(int id)
         {
-            if (_context.CarServices == null)
-            {
-                return NotFound();
-            }
-            var carService = await _context.CarServices.FindAsync(id);
-            if (carService == null)
-            {
-                return NotFound();
-            }
-
-            _context.CarServices.Remove(carService);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return _servicerepo.DeleteCarService(id);
         }
 
-        private bool CarServiceExists(int id)
+        [HttpGet]
+        public bool CarServiceExists(int id)
         {
-            return (_context.CarServices?.Any(e => e.Serviceid == id)).GetValueOrDefault();
+            return _servicerepo.CarServiceExists(id);
         }
     }
 }

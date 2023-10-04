@@ -14,22 +14,22 @@ namespace VehicleManagement.Controllers
     public class CarBrands1Controller : ControllerBase
     {
         private readonly VehicleManagementContext _context;
-       
         private readonly IWebHostEnvironment _hostEnvironment;
 
         public CarBrands1Controller(VehicleManagementContext context, IWebHostEnvironment hostEnvironment)
         {
             _context = context;
-           
             this._hostEnvironment = hostEnvironment;
-
         }
 
-        // GET: api/CarBrands1
+
+        /// <summary>
+        /// GetCarBrands
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CarBrand>>> GetCarBrands()
         {
-
             return await _context.CarBrands.Select(x => new CarBrand()
             {
                 Brandid = x.Brandid,
@@ -40,7 +40,11 @@ namespace VehicleManagement.Controllers
                 .ToListAsync();
         }
 
-        // GET: api/CarBrands1/5
+        /// <summary>
+        /// GetCarBrand
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<CarBrand>> GetCarBrand(int id)
         {
@@ -48,20 +52,21 @@ namespace VehicleManagement.Controllers
             {
                 return NotFound();
             }
-
-
             var carBrand = await _context.CarBrands.FindAsync(id);
-
             if (carBrand == null)
             {
                 return NotFound();
             }
-
             return carBrand;
         }
 
-        // PUT: api/CarBrands1/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="carBrand"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCarBrand(int id, [FromForm] CarBrand carBrand)
         {
@@ -69,17 +74,12 @@ namespace VehicleManagement.Controllers
             {
                 return BadRequest();
             }
-
-
             if (carBrand.ImageFile != null)
             {
                 //DeleteImage(carBrand.BranndImage);
                 carBrand.BranndImage = await SaveImage(carBrand.ImageFile);
             }
-
-
             _context.Entry(carBrand).State = EntityState.Modified;
-
             try
             {
                 await _context.SaveChangesAsync();
@@ -99,22 +99,28 @@ namespace VehicleManagement.Controllers
             return NoContent();
         }
 
-        // POST: api/CarBrands1
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="carBrand"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult<CarBrand>> PostCarBrand([FromForm] CarBrand carBrand)
         {
-
             carBrand.BranndImage = await SaveImage(carBrand.ImageFile);
             _context.CarBrands.Add(carBrand);
             await _context.SaveChangesAsync();
             return StatusCode(201);
-
-
-
         }
 
-        // DELETE: api/CarBrands1/5
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCarBrand(int id)
         {
@@ -135,9 +141,10 @@ namespace VehicleManagement.Controllers
             return (_context.CarBrands?.Any(e => e.Brandid == id)).GetValueOrDefault();
         }
 
-
-
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="imageName"></param>
         [NonAction]
         public void DeleteImage(string imageName)
         {
@@ -147,6 +154,11 @@ namespace VehicleManagement.Controllers
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="imageFile"></param>
+        /// <returns></returns>
         [NonAction]
         public async Task<string> SaveImage(IFormFile imageFile)
         {

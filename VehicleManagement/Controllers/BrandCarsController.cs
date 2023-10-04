@@ -8,17 +8,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VehicleManagement.Models;
-using VehicleManagement.Models.CarBrands;
 
 namespace VehicleManagement.Controllers
 {
     [Route("api/[controller]/[action]")]
-    //[Authorize(Roles = "Admin")]
     [ApiController]
     public class BrandCarsController : ControllerBase
     {
         private readonly VehicleManagementContext _context;
-
         private readonly IWebHostEnvironment _hostEnvironment;
 
         public BrandCarsController(VehicleManagementContext context, IWebHostEnvironment hostEnvironment)
@@ -28,11 +25,14 @@ namespace VehicleManagement.Controllers
 
         }
 
-        // GET: api/BrandCars
+
+        /// <summary>
+        /// Get Brands
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BrandCar>>> GetBrandCars()
         {
-
             return await _context.BrandCars.Select(x => new BrandCar()
             {
                 Carid = x.Carid,
@@ -45,38 +45,14 @@ namespace VehicleManagement.Controllers
                 .ToListAsync();
         }
 
-        // GET: api/BrandCars/5
-        //[HttpGet("{id}")]
 
-        //public async Task<ActionResult<IEnumerable<BrandCar>>> GetBrandCar(int id)
-        //{
 
-        //    if (_context.BrandCars == null)
-        //    {
-        //        return NotFound();
-        //    }
 
-        //    List<BrandCar> cars = await _context.BrandCars.Where(car => car.Brandid == id).ToListAsync();
-
-        //    if (cars == null || cars.Count == 0)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return await _context.BrandCars.Select(x => new BrandCar()
-        //    {
-        //        Carid = x.Carid,
-        //        Brandid = x.Brandid,
-        //        CarName = x.CarName,
-        //        AddAmount = x.AddAmount,
-        //        CarImage = x.CarImage,
-        //        ImageSrc = String.Format("{0}://{1}{2}/Images/{3}", Request.Scheme, Request.Host, Request.PathBase, x.CarImage)
-        //    })
-        //       .ToListAsync();
-
-        //    return cars;
-        //}
-        // GET: api/BrandCars/5
+        /// <summary>
+        /// Get Brands brandid = brandid
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<List<BrandCar>>> GetBrandCar(int id)
         {
@@ -84,7 +60,6 @@ namespace VehicleManagement.Controllers
             {
                 return NotFound();
             }
-
             List<BrandCar> cars = await _context.BrandCars
                 .Where(car => car.Brandid == id)
                 .Select(x => new BrandCar()
@@ -102,15 +77,16 @@ namespace VehicleManagement.Controllers
             {
                 return NotFound();
             }
-
             return cars;
         }
 
 
-
-
-        // PUT: api/BrandCars/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// PutBrandCar 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="brandCar"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBrandCar(int id, [FromForm] BrandCar brandCar)
 
@@ -119,15 +95,11 @@ namespace VehicleManagement.Controllers
             {
                 return BadRequest();
             }
-
             if (brandCar.ImageFile != null)
             {
-                //DeleteImage(carBrand.BranndImage);
                 brandCar.CarImage = await SaveImage(brandCar.ImageFile);
             }
-
             _context.Entry(brandCar).State = EntityState.Modified;
-
             try
             {
                 await _context.SaveChangesAsync();
@@ -147,30 +119,27 @@ namespace VehicleManagement.Controllers
             return NoContent();
         }
 
-        // POST: api/BrandCars
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="brandCar"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult<BrandCar>> PostBrandCar([FromForm] BrandCar brandCar)
         {
-            //if (_context.BrandCars == null)
-            //{
-            //    return Problem("Entity set 'VehicleManagementContext.BrandCars'  is null.");
-            //}
-            //  _context.BrandCars.Add(brandCar);
-            //  await _context.SaveChangesAsync();
-
-            //  return CreatedAtAction("GetBrandCar", new { id = brandCar.Carid }, brandCar);
-
             brandCar.CarImage = await SaveImage(brandCar.ImageFile);
             _context.BrandCars.Add(brandCar);
             await _context.SaveChangesAsync();
             return StatusCode(201);
-
-
-
         }
 
-        // DELETE: api/BrandCars/5
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBrandCar(int id)
         {
@@ -183,14 +152,12 @@ namespace VehicleManagement.Controllers
             {
                 return NotFound();
             }
-
             DeleteImage(brandCar.CarImage);
             _context.BrandCars.Remove(brandCar);
-
             await _context.SaveChangesAsync();
-
             return Ok(brandCar);
         }
+
 
         private bool BrandCarExists(int id)
         {
@@ -198,7 +165,10 @@ namespace VehicleManagement.Controllers
         }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="imageName"></param>
         [NonAction]
         public void DeleteImage(string imageName)
         {
@@ -207,7 +177,11 @@ namespace VehicleManagement.Controllers
                 System.IO.File.Delete(imagePath);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="imageFile"></param>
+        /// <returns></returns>
         [NonAction]
         public async Task<string> SaveImage(IFormFile imageFile)
         {
