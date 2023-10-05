@@ -49,6 +49,8 @@ namespace VehicleManagement.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin,Customer")]
+
         public async Task<ActionResult<CarBrand>> GetCarBrand(int id)
         {
             if (_context.CarBrands == null)
@@ -72,7 +74,6 @@ namespace VehicleManagement.Controllers
         /// <returns></returns>
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
-
         public async Task<IActionResult> PutCarBrand(int id, [FromForm] CarBrand carBrand)
         {
             if (id != carBrand.Brandid)
@@ -129,7 +130,6 @@ namespace VehicleManagement.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
 
         public async Task<IActionResult> DeleteCarBrand(int id)
         {

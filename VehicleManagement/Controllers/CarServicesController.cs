@@ -82,7 +82,6 @@ namespace VehicleManagement.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
 
         public IActionResult DeleteCarService(int id)
         {

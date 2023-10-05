@@ -23,7 +23,7 @@ namespace VehicleManagement.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class UsersController : ControllerBase
     {
         private readonly VehicleManagementContext _context;
@@ -147,7 +147,6 @@ namespace VehicleManagement.Controllers
         /// <returns></returns>
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
-
         public async Task<IActionResult> DeleteVuser(int id)
         {
             if (_context.Vusers == null)

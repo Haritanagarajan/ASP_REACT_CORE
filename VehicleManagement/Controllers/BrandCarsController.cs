@@ -32,7 +32,6 @@ namespace VehicleManagement.Controllers
         /// <returns></returns>
         [HttpGet]
         [Authorize(Roles = "Admin,Customer")]
-
         public async Task<ActionResult<IEnumerable<BrandCar>>> GetBrandCars()
         {
             return await _context.BrandCars.Select(x => new BrandCar()
@@ -57,7 +56,6 @@ namespace VehicleManagement.Controllers
         /// <returns></returns>
         [HttpGet("{id}")]
         [Authorize(Roles = "Admin,Customer")]
-
         public async Task<ActionResult<List<BrandCar>>> GetBrandCar(int id)
         {
             if (_context.BrandCars == null)
@@ -91,8 +89,8 @@ namespace VehicleManagement.Controllers
         /// <param name="id"></param>
         /// <param name="brandCar"></param>
         /// <returns></returns>
+        /// 
         [Authorize(Roles = "Admin")]
-
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBrandCar(int id, [FromForm] BrandCar brandCar)
 
@@ -133,7 +131,6 @@ namespace VehicleManagement.Controllers
         /// <returns></returns>
         [HttpPost]
         [Authorize(Roles = "Admin")]
-
         public async Task<ActionResult<BrandCar>> PostBrandCar([FromForm] BrandCar brandCar)
         {
             brandCar.CarImage = await SaveImage(brandCar.ImageFile);
@@ -149,8 +146,6 @@ namespace VehicleManagement.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
-
         public async Task<IActionResult> DeleteBrandCar(int id)
         {
             if (_context.BrandCars == null)

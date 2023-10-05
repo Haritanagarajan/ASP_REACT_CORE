@@ -127,7 +127,6 @@ namespace VehicleManagement.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
 
         public async Task<IActionResult> DeleteCarFuel(int id)
         {
