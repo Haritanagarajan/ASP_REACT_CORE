@@ -9,9 +9,9 @@ public partial class CarFuel
 {
     [Key]
     public int Fuelid { get; set; }
-    [Required(ErrorMessage = "Fuel Name is required")]
+    //[Required(ErrorMessage = "Fuel Name is required")]
     public string? FuelName { get; set; }
-    [Required(ErrorMessage = "Fuel Name is required")]
+    //[Required(ErrorMessage = "Fuel Name is required")]
     public string? FuelImage { get; set; }
     [NotMapped]
     public IFormFile? ImageFile { get; set; }

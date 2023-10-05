@@ -4,7 +4,6 @@ using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Mail;
-
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,13 +16,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MimeKit;
 using Newtonsoft.Json;
+using Octokit;
 using VehicleManagement.Models;
 
 namespace VehicleManagement.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly VehicleManagementContext _context;
@@ -37,6 +37,8 @@ namespace VehicleManagement.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
+        [Authorize(Roles = "Admin")]
+
         public async Task<ActionResult<IEnumerable<Vuser>>> GetVusers()
         {
             if (_context.Vusers == null)
@@ -52,6 +54,7 @@ namespace VehicleManagement.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Vuser>> GetVuser(int id)
         {
             if (_context.Vusers == null)
@@ -73,6 +76,8 @@ namespace VehicleManagement.Controllers
         /// <param name="vuser"></param>
         /// <returns></returns>
         [HttpPut("{id}")]
+        [Authorize(Roles = "Customer")]
+
         public async Task<IActionResult> PutVuser(int id, Vuser vuser)
         {
             if (id != vuser.Vuserid)
@@ -105,6 +110,7 @@ namespace VehicleManagement.Controllers
         /// <param name="vuser"></param>
         /// <returns></returns>
         [HttpPost]
+        [Authorize(Roles = "Customer")]
         public async Task<ActionResult<Vuser>> PostVuser(Vuser vuser)
         {
             vuser.Vcreated = DateTime.Now;
@@ -140,6 +146,8 @@ namespace VehicleManagement.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> DeleteVuser(int id)
         {
             if (_context.Vusers == null)
@@ -185,14 +193,27 @@ namespace VehicleManagement.Controllers
                 var response = new Models.ValidateUserscs
                 {
                     VUserid = result[0].VUserid,
-                    Roles = result[0].Roles
+                    Roles = result[0].Roles,
                 };
-                return Ok(response);
+
+                var tokenResult = TokenGenerate(response);
+
+                if (tokenResult is OkObjectResult okObjectResult)
+                {
+                    string jwt = okObjectResult.Value?.ToString();
+
+                    var Logindetails = new Models.LoginTokenDetails
+                    {
+                        VUserid = (int)result[0].VUserid,
+                        Roles = result[0].Roles,
+                        tokenResult = jwt
+                    };
+                    return Ok(Logindetails);
+                }
+                return Ok();
 
             }
-
         }
-
 
         /// <summary>
         /// 
@@ -200,60 +221,29 @@ namespace VehicleManagement.Controllers
         /// <param name="jwtcheck"></param>
         /// <returns></returns>
         [HttpPost("getToken")]
-        public IActionResult TokenGenerate([FromBody] JwtCheck jwtcheck)
+        public IActionResult TokenGenerate([FromBody] ValidateUserscs user)
         {
-            var log = _context.Vusers.FirstOrDefault(x => x.Vemail == jwtcheck.Email);
 
-            if (log == null)
-            {
-                return BadRequest(new Models.Response { Status = "Invalid", Message = "Invalid User." });
-            }
+            var key = "Yh2k7QSu4l8CZg5p6X3Pna9L0Miy4D3Bvt0JVr87UcOj69Kqw5R2Nmf4FWs0bn";
+            var creds = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)), SecurityAlgorithms.HmacSha256);
 
-            else
-            {
-                int? roleid = log.Vroleid;
-
-                var Roles = "no role";
-
-                if (roleid == 1)
-                {
-                    Roles = "Admin";
-                }
-                if (roleid == 2)
-                {
-                    Roles = "Customer";
-                }
-
-                if (roleid == null)
-                {
-                    return BadRequest("User does not have a role.");
-                }
-
-                var key = "Yh2k7QSu4l8CZg5p6X3Pna9L0Miy4D3Bvt0JVr87UcOj69Kqw5R2Nmf4FWs0bn";
-                var creds = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)), SecurityAlgorithms.HmacSha256);
-
-                var claims = new List<Claim>
+            var claims = new List<Claim>
               {
                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                   new Claim(ClaimTypes.Role, Roles),
+                   new Claim(ClaimTypes.Role, user.Roles),
               };
 
-                var token = new JwtSecurityToken(
-                    issuer: "JWTAuthenticationServer",
-                    audience: "JWTServicePostmanClient",
-                    claims: claims,
-                    expires: DateTime.Now.AddDays(1),
-                    signingCredentials: creds);
+            var token = new JwtSecurityToken(
+                issuer: "JWTAuthenticationServer",
+                audience: "JWTServicePostmanClient",
+                claims: claims,
+                expires: DateTime.Now.AddDays(1),
+                signingCredentials: creds);
 
-                var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
-                var response = new Models.JwtCheck
-                {
-                    Email = jwtcheck.Email,
-                    Token = jwtToken
-                };
+            var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
 
-                return Ok(response);
-            }
+            return Ok(jwtToken);
         }
     }
 }
+

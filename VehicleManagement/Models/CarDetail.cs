@@ -8,9 +8,9 @@ public partial class CarDetail
 {
     [Key]
     public int DetailsId { get; set; }
-    [Required(ErrorMessage = "User Id is required")]
+    //[Required(ErrorMessage = "User Id is required")]
     public int? Vuserid { get; set; }
-    [Required(ErrorMessage = "User Name is required")]
+    //[Required(ErrorMessage = "User Name is required")]
     public string? VuserName { get; set; }
     public int? Brandid { get; set; }
     public string? BrandImage { get; set; }

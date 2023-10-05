@@ -9,9 +9,9 @@ public partial class CarBrand
 {
     [Key]
     public int Brandid { get; set; }
-    [Required(ErrorMessage = "BrandName is required")]
+    //[Required(ErrorMessage = "BrandName is required")]
     public string? BrandName { get; set; }
-    [Required(ErrorMessage = "Image is required")]
+    //[Required(ErrorMessage = "Image is required")]
     public string? BranndImage { get; set; }
     [NotMapped]
     public IFormFile? ImageFile { get; set; }

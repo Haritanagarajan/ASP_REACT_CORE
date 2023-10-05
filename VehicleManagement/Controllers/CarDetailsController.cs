@@ -17,7 +17,7 @@ namespace VehicleManagement.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-
+    [Authorize]
     public class CarDetailsController : ControllerBase
     {
         private readonly ICarDetails _detailsrepo;
@@ -35,6 +35,7 @@ namespace VehicleManagement.Controllers
         /// <param name="carDetail"></param>
         /// <returns></returns>
         [HttpPost("Details")]
+        [Authorize(Roles="Customer")]
         public async Task<ActionResult<CarDetail>> PostCarDetail(CarDetail carDetail)
         {
             return await _detailsrepo.PostCarDetail(carDetail);
@@ -46,6 +47,7 @@ namespace VehicleManagement.Controllers
         /// <param name="email"></param>
         /// <returns></returns>
         [HttpPost]
+        [Authorize(Roles = "Customer")]
         public ActionResult Mailer(EmailModel email)
         {
 
@@ -60,10 +62,17 @@ namespace VehicleManagement.Controllers
             message.Subject = "Order Confirmation";
             var bodyBuilder = new BodyBuilder
             {
-                TextBody = "Thank you for booking  the Car Service with us:\n\n" +
+                TextBody = "Thank you for booking the Car Service with us:\n\n" +
+                "Yor Payment has been successfully done:\n\n" + 
                             $"User Name: {order.VuserName}\n" +
                             $"Order Id: {order.DetailsId}\n" +
-                            $"Due Date: {order.DueDate}"
+                            $"Due Date: {order.DueDate}\n" +
+                            $"BrandName: {order.Brandid}\n" +
+                            $"Service Name: {order.Serviceid}\n" +
+                            $"BrandImage: {order.BrandImage}\n" +
+                            "For any queries? contact us 6382830515\n\n" 
+
+
             };
             message.Body = bodyBuilder.ToMessageBody();
             using (var client = new MailKit.Net.Smtp.SmtpClient())

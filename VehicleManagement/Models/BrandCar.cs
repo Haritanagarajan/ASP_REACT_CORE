@@ -9,13 +9,13 @@ public partial class BrandCar
 {
     [Key]
     public int Carid { get; set; }
-    [Required(ErrorMessage = "Brandid is required")]
+    //[Required(ErrorMessage = "Brandid is required")]
     public int? Brandid { get; set; }
-    [Required(ErrorMessage = "CarName is required")]
+    //[Required(ErrorMessage = "CarName is required")]
     public string? CarName { get; set; }
-    [Required(ErrorMessage = "Amount is required")]
+    //[Required(ErrorMessage = "Amount is required")]
     public decimal? AddAmount { get; set; }
-    [Required(ErrorMessage = "CarImage is required")]
+    //[Required(ErrorMessage = "CarImage is required")]
     public string? CarImage { get; set; }
     [NotMapped]
     public IFormFile? ImageFile { get; set; }

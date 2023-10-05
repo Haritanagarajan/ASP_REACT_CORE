@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -28,6 +29,8 @@ namespace VehicleManagement.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
+        [Authorize(Roles = "Admin,Customer")]
+
         public async Task<ActionResult<IEnumerable<CarBrand>>> GetCarBrands()
         {
             return await _context.CarBrands.Select(x => new CarBrand()
@@ -68,6 +71,8 @@ namespace VehicleManagement.Controllers
         /// <param name="carBrand"></param>
         /// <returns></returns>
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> PutCarBrand(int id, [FromForm] CarBrand carBrand)
         {
             if (id != carBrand.Brandid)
@@ -107,6 +112,8 @@ namespace VehicleManagement.Controllers
         /// <param name="carBrand"></param>
         /// <returns></returns>
         [HttpPost]
+        [Authorize(Roles = "Admin")]
+
         public async Task<ActionResult<CarBrand>> PostCarBrand([FromForm] CarBrand carBrand)
         {
             carBrand.BranndImage = await SaveImage(carBrand.ImageFile);
@@ -122,6 +129,8 @@ namespace VehicleManagement.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> DeleteCarBrand(int id)
         {
             var carBrand = await _context.CarBrands.FindAsync(id);
@@ -146,6 +155,8 @@ namespace VehicleManagement.Controllers
         /// </summary>
         /// <param name="imageName"></param>
         [NonAction]
+        [Authorize(Roles = "Admin,Customer")]
+
         public void DeleteImage(string imageName)
         {
             var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", imageName);
@@ -160,6 +171,8 @@ namespace VehicleManagement.Controllers
         /// <param name="imageFile"></param>
         /// <returns></returns>
         [NonAction]
+        [Authorize(Roles = "Admin,Customer")]
+
         public async Task<string> SaveImage(IFormFile imageFile)
         {
             string imageName = new String(Path.GetFileNameWithoutExtension(imageFile.FileName).Take(10).ToArray()).Replace(' ', '-');

@@ -6,7 +6,7 @@ namespace VehicleManagement.Models
     {
         [Key]
         public Nullable<int> VUserid { get; set; }
-        [Required(ErrorMessage = "Roles is required")]
+        //[Required(ErrorMessage = "Roles is required")]
         public string? Roles { get; set; }
 
     }
