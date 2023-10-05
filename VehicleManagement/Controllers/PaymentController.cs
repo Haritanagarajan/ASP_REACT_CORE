@@ -18,15 +18,13 @@ namespace VehicleManagement.Controllers
 
             [HttpPost]
             [Route("initialize")]
-            public async Task<IActionResult> InitializePayment()
+            public async Task<IActionResult> InitializePayment(int amount)
             {
                 var options = new Dictionary<string, object>
             {
-                { "amount", 200 },
+                { "amount", amount * 100},
                 { "currency", "INR" },
                 { "receipt", "recipt_1" },
-                // auto capture payments rather than manual capture
-                // razor pay recommended option
                 { "payment_capture", true }
             };
 
