@@ -14,7 +14,6 @@ using Microsoft.Extensions.Configuration;
 using VehicleManagement.IRepository;
 
 var builder = WebApplication.CreateBuilder(args);
-
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -48,7 +47,9 @@ builder.Services.AddCors(options =>
 //Dependency injection
 builder.Services.AddScoped<ICarDetails, CarDetailsRepo>();
 builder.Services.AddScoped<ICarService, CarServiceRepo>();
-
+builder.Services.AddScoped<ICarFuel, CarFuelRepo>();
+builder.Services.AddScoped<ICarBrand,CarBrandRepo>();
+builder.Services.AddScoped<IBrandCar, BrandCarRepo>();
 //session
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>

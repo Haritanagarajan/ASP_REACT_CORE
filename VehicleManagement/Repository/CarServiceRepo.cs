@@ -9,82 +9,77 @@ namespace VehicleManagement.Repository
     public class CarServiceRepo : ICarService
     {
         private readonly VehicleManagementContext _context;
-
         public CarServiceRepo(VehicleManagementContext context)
         {
             _context = context;
         }
-
-        public ActionResult<IEnumerable<CarService>> GetCarServices()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<CarService>> GetCarServices()
         {
-            if (_context.CarServices == null)
-            {
-                return null;
-            }
-            return _context.CarServices.ToList();
+            return await _context.CarServices.ToListAsync();
         }
-
-        public ActionResult<IEnumerable<CarService>> GetCarService(int id)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<CarService>> GetCarService(int id)
         {
             var addAmount = _context.BrandCars
                 .Select(brandCar => brandCar.AddAmount)
                 .FirstOrDefault();
-            List<CarService> service = _context.CarServices
+            List<CarService> service = await _context.CarServices
                 .Where(carService => carService.Carid == id)
-                .ToList();
-            if (service == null || service.Count == 0)
-            {
-                return null;
-            }
+                .ToListAsync();
             foreach (var carService in service)
             {
                 carService.Servicecost += addAmount;
             }
             return service;
         }
-
-
-        public IActionResult PutCarService(int id, CarService carService)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="carService"></param>
+        /// <returns></returns>
+        public async Task PutCarService(int id, CarService carService)
         {
             _context.Entry(carService).State = EntityState.Modified;
-            try
-            {
-                _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CarServiceExists(id))
-                {
-                    return null;
-                }
-                else
-                {
-                    throw;
-                }
-            }
-            return null;
+            await _context.SaveChangesAsync();
         }
-
-        public ActionResult<CarService> PostCarService(CarService carService)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="carService"></param>
+        /// <returns></returns>
+        public async Task PostCarService(CarService carService)
         {
             _context.CarServices.Add(carService);
-            _context.SaveChangesAsync();
-            return null;
+            await _context.SaveChangesAsync();
         }
-
-        public IActionResult DeleteCarService(int id)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task DeleteCarService(int id)
         {
-            var carService = _context.CarServices.Find(id);
+            var carService = await _context.CarServices.FindAsync(id);
             _context.CarServices.Remove(carService);
-            _context.SaveChangesAsync();
-            return null ;
+            await _context.SaveChangesAsync();
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public bool CarServiceExists(int id)
         {
             return (_context.CarServices?.Any(e => e.Serviceid == id)).GetValueOrDefault();
         }
-
-
     }
 }

@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using VehicleManagement.IRepository;
 using VehicleManagement.Models;
+using VehicleManagement.Repository;
 
 namespace VehicleManagement.Controllers
 {
@@ -14,99 +16,62 @@ namespace VehicleManagement.Controllers
     [ApiController]
     public class CarBrands1Controller : ControllerBase
     {
+        private readonly ICarBrand _carbrand;
         private readonly VehicleManagementContext _context;
-        private readonly IWebHostEnvironment _hostEnvironment;
-
-        public CarBrands1Controller(VehicleManagementContext context, IWebHostEnvironment hostEnvironment)
+        public CarBrands1Controller(ICarBrand carbrand, VehicleManagementContext context)
         {
+            _carbrand = carbrand;
             _context = context;
-            this._hostEnvironment = hostEnvironment;
         }
-
-
         /// <summary>
-        /// GetCarBrands
+        /// 
         /// </summary>
         /// <returns></returns>
         [HttpGet]
         [Authorize(Roles = "Admin,Customer")]
-
         public async Task<ActionResult<IEnumerable<CarBrand>>> GetCarBrands()
         {
-            return await _context.CarBrands.Select(x => new CarBrand()
+            try
             {
-                Brandid = x.Brandid,
-                BrandName = x.BrandName,
-                BranndImage = x.BranndImage,
-                ImageSrc = String.Format("{0}://{1}{2}/Images/{3}", Request.Scheme, Request.Host, Request.PathBase, x.BranndImage)
-            })
-                .ToListAsync();
-        }
-
-        /// <summary>
-        /// GetCarBrand
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [HttpGet("{id}")]
-        [Authorize(Roles = "Admin,Customer")]
-
-        public async Task<ActionResult<CarBrand>> GetCarBrand(int id)
-        {
-            if (_context.CarBrands == null)
-            {
-                return NotFound();
+                var scheme = Request.Scheme;
+                var host = Request.Host.ToUriComponent();
+                var pathBase = Request.PathBase.ToUriComponent();
+                var carbrands = await _carbrand.GetCarBrands(scheme, host, pathBase);
+                return Ok(carbrands);
             }
-            var carBrand = await _context.CarBrands.FindAsync(id);
-            if (carBrand == null)
+            catch
             {
-                return NotFound();
+                return BadRequest(new Models.Response
+                {
+                    Status = "Invalid",
+                    Message = "Invalid Brands options.",
+                });
             }
-            return carBrand;
         }
-
-
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id"></param>
         /// <param name="carBrand"></param>
         /// <returns></returns>
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> PutCarBrand(int id, [FromForm] CarBrand carBrand)
+        public async Task<ActionResult> PutCarBrand(int id, [FromForm] CarBrand carBrand)
         {
-            if (id != carBrand.Brandid)
-            {
-                return BadRequest();
-            }
-            if (carBrand.ImageFile != null)
-            {
-                //DeleteImage(carBrand.BranndImage);
-                carBrand.BranndImage = await SaveImage(carBrand.ImageFile);
-            }
-            _context.Entry(carBrand).State = EntityState.Modified;
             try
             {
-                await _context.SaveChangesAsync();
+                await _carbrand.PutCarBrand(id, carBrand);
+                return Ok();
             }
-            catch (DbUpdateConcurrencyException)
+            catch
             {
-                if (!CarBrandExists(id))
+                return BadRequest(new Models.Response
                 {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                    Status = "Invalid",
+                    Message = "Invalid brand Edit.",
+                });
             }
-
-            return NoContent();
         }
-
-
-
         /// <summary>
         /// 
         /// </summary>
@@ -114,57 +79,89 @@ namespace VehicleManagement.Controllers
         /// <returns></returns>
         [HttpPost]
         [Authorize(Roles = "Admin")]
-
-        public async Task<ActionResult<CarBrand>> PostCarBrand([FromForm] CarBrand carBrand)
+        public async Task<ActionResult> PostCarBrand([FromForm] CarBrand carBrand)
         {
-            carBrand.BranndImage = await SaveImage(carBrand.ImageFile);
-            _context.CarBrands.Add(carBrand);
-            await _context.SaveChangesAsync();
-            return StatusCode(201);
+            try
+            {
+                await _carbrand.PostCarBrand(carBrand);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest(new Models.Response
+                {
+                    Status = "Invalid",
+                    Message = "Invalid brand Post.",
+                });
+            }
         }
-
-
         /// <summary>
         /// 
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-
-        public async Task<IActionResult> DeleteCarBrand(int id)
+        public async Task<ActionResult> DeleteCarBrand(int id)
         {
-            var carBrand = await _context.CarBrands.FindAsync(id);
-            if (carBrand == null)
+            try
             {
-                return NotFound();
+                await _carbrand.DeleteCarBrand(id);
+                return Ok();
             }
-            DeleteImage(carBrand.BranndImage);
-            _context.CarBrands.Remove(carBrand);
-            await _context.SaveChangesAsync();
-
-            return Ok(carBrand);
+            catch
+            {
+                return BadRequest(new Models.Response
+                {
+                    Status = "Invalid",
+                    Message = "Invalid brand Delete.",
+                });
+            }
         }
-
-        private bool CarBrandExists(int id)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<ActionResult> CarBrandExists(int id)
         {
-            return (_context.CarBrands?.Any(e => e.Brandid == id)).GetValueOrDefault();
+            try
+            {
+                _carbrand.CarBrandExists(id);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest(new Models.Response
+                {
+                    Status = "Invalid",
+                    Message = "Invalid brand Exists.",
+                });
+            }
         }
-
         /// <summary>
         /// 
         /// </summary>
         /// <param name="imageName"></param>
+        /// <returns></returns>
         [NonAction]
         [Authorize(Roles = "Admin,Customer")]
-
-        public void DeleteImage(string imageName)
+        public async Task<ActionResult> DeleteImage(string imageName)
         {
-            var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", imageName);
-            if (System.IO.File.Exists(imagePath))
-                System.IO.File.Delete(imagePath);
+            try
+            {
+                _carbrand.DeleteImage(imageName);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest(new Models.Response
+                {
+                    Status = "Invalid",
+                    Message = "Invalid brand Image Delete.",
+                });
+            }
         }
-
-
         /// <summary>
         /// 
         /// </summary>
@@ -172,19 +169,22 @@ namespace VehicleManagement.Controllers
         /// <returns></returns>
         [NonAction]
         [Authorize(Roles = "Admin,Customer")]
-
-        public async Task<string> SaveImage(IFormFile imageFile)
+        public async Task<ActionResult> SaveImage(IFormFile imageFile)
         {
-            string imageName = new String(Path.GetFileNameWithoutExtension(imageFile.FileName).Take(10).ToArray()).Replace(' ', '-');
-            imageName = imageName + DateTime.Now.ToString("yymmssfff") + Path.GetExtension(imageFile.FileName);
-            var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", imageName);
-            using (var fileStream = new FileStream(imagePath, FileMode.Create))
+            try
             {
-                await imageFile.CopyToAsync(fileStream);
+                await _carbrand.SaveImage(imageFile);
+                return Ok();
+
             }
-            return imageName;
+            catch
+            {
+                return BadRequest(new Models.Response
+                {
+                    Status = "Invalid",
+                    Message = "Invalid brand Image Save.",
+                });
+            }
         }
-
-
     }
 }

@@ -18,7 +18,6 @@ using MimeKit;
 using Newtonsoft.Json;
 using Octokit;
 using VehicleManagement.Models;
-
 namespace VehicleManagement.Controllers
 {
     [Route("api/[controller]/[action]")]
@@ -31,14 +30,12 @@ namespace VehicleManagement.Controllers
         {
             _context = context;
         }
-
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
         [HttpGet]
         [Authorize(Roles = "Admin")]
-
         public async Task<ActionResult<IEnumerable<Vuser>>> GetVusers()
         {
             if (_context.Vusers == null)
@@ -47,7 +44,6 @@ namespace VehicleManagement.Controllers
             }
             return await _context.Vusers.ToListAsync();
         }
-
         /// <summary>
         /// 
         /// </summary>
@@ -68,7 +64,6 @@ namespace VehicleManagement.Controllers
             }
             return vuser;
         }
-
         /// <summary>
         /// 
         /// </summary>
@@ -77,7 +72,6 @@ namespace VehicleManagement.Controllers
         /// <returns></returns>
         [HttpPut("{id}")]
         [Authorize(Roles = "Customer")]
-
         public async Task<IActionResult> PutVuser(int id, Vuser vuser)
         {
             if (id != vuser.Vuserid)
@@ -102,8 +96,6 @@ namespace VehicleManagement.Controllers
             }
             return NoContent();
         }
-
-
         /// <summary>
         /// 
         /// </summary>
@@ -139,7 +131,6 @@ namespace VehicleManagement.Controllers
             }
             return Ok();
         }
-
         /// <summary>
         /// 
         /// </summary>
@@ -162,13 +153,10 @@ namespace VehicleManagement.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
         }
-
         private bool VuserExists(int id)
         {
             return (_context.Vusers?.Any(e => e.Vuserid == id)).GetValueOrDefault();
         }
-
-
         /// <summary>
         /// Procedure to Decrypt
         /// </summary>
@@ -213,7 +201,6 @@ namespace VehicleManagement.Controllers
 
             }
         }
-
         /// <summary>
         /// 
         /// </summary>
@@ -222,7 +209,6 @@ namespace VehicleManagement.Controllers
         [HttpPost("getToken")]
         public IActionResult TokenGenerate([FromBody] ValidateUserscs user)
         {
-
             var key = "Yh2k7QSu4l8CZg5p6X3Pna9L0Miy4D3Bvt0JVr87UcOj69Kqw5R2Nmf4FWs0bn";
             var creds = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)), SecurityAlgorithms.HmacSha256);
 
@@ -231,7 +217,6 @@ namespace VehicleManagement.Controllers
                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                    new Claim(ClaimTypes.Role, user.Roles),
               };
-
             var token = new JwtSecurityToken(
                 issuer: "JWTAuthenticationServer",
                 audience: "JWTServicePostmanClient",

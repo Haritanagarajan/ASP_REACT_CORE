@@ -5,11 +5,12 @@ namespace VehicleManagement.IRepository
 {
     public interface ICarService
     {
-        ActionResult<IEnumerable<CarService>> GetCarServices();
-        ActionResult<IEnumerable<CarService>> GetCarService(int id);
-        IActionResult PutCarService(int id, CarService carService);
-        ActionResult<CarService> PostCarService(CarService carService);
-        IActionResult DeleteCarService(int id);
+        public Task<IEnumerable<CarService>> GetCarServices();
+        public Task<IEnumerable<CarService>> GetCarService(int id);
+        public Task PutCarService(int id, CarService carService);
+        public Task PostCarService(CarService carService);
+        public Task DeleteCarService(int id);
         public bool CarServiceExists(int id);
+
     }
 }

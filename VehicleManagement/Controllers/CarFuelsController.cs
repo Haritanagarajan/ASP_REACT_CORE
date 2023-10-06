@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using VehicleManagement.IRepository;
 using VehicleManagement.Models;
+using VehicleManagement.Repository;
 
 namespace VehicleManagement.Controllers
 {
@@ -14,58 +16,38 @@ namespace VehicleManagement.Controllers
     [ApiController]
     public class CarFuelsController : ControllerBase
     {
+        private readonly ICarFuel _carfuel;
         private readonly VehicleManagementContext _context;
-        private readonly IWebHostEnvironment _hostEnvironment;
-
-
-        public CarFuelsController(VehicleManagementContext context, IWebHostEnvironment hostEnvironment)
+        public CarFuelsController(ICarFuel carfuel, VehicleManagementContext context)
         {
+            _carfuel = carfuel;
             _context = context;
-            this._hostEnvironment = hostEnvironment;
         }
-
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
         [HttpGet]
         [Authorize(Roles = "Admin,Customer")]
-
         public async Task<ActionResult<IEnumerable<CarFuel>>> GetCarFuels()
         {
-            return await _context.CarFuels.Select(x => new CarFuel()
+            try
             {
-                Fuelid = x.Fuelid,
-                FuelName = x.FuelName,
-                FuelImage = x.FuelImage,
-                ImageSrc = String.Format("{0}://{1}{2}/Images/{3}", Request.Scheme, Request.Host, Request.PathBase, x.FuelImage)
-            })
-               .ToListAsync();
-        }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [HttpGet("{id}")]
-        [Authorize(Roles = "Admin,Customer")]
-
-        public async Task<ActionResult<CarFuel>> GetCarFuel(int id)
-        {
-            if (_context.CarFuels == null)
-            {
-                return NotFound();
+                var scheme = Request.Scheme;
+                var host = Request.Host.ToUriComponent();
+                var pathBase = Request.PathBase.ToUriComponent();
+                var carFuels = await _carfuel.GetCarFuels(scheme, host, pathBase);
+                return Ok(carFuels);
             }
-            var carFuel = await _context.CarFuels.FindAsync(id);
-            if (carFuel == null)
+            catch
             {
-                return NotFound();
+                return BadRequest(new Models.Response
+                {
+                    Status = "Invalid",
+                    Message = "Invalid Fuel options.",
+                });
             }
-            return carFuel;
         }
-
         /// <summary>
         /// 
         /// </summary>
@@ -74,36 +56,22 @@ namespace VehicleManagement.Controllers
         /// <returns></returns>
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
-
-        public async Task<IActionResult> PutCarFuel(int id, [FromForm] CarFuel carFuel)
+        public async Task<ActionResult> PutCarFuel(int id, [FromForm]CarFuel carFuel)
         {
-            if (id != carFuel.Fuelid)
-            {
-                return BadRequest();
-            }
-            if (carFuel.ImageFile != null)
-            {
-                carFuel.FuelImage = await SaveImage(carFuel.ImageFile);
-            }
-            _context.Entry(carFuel).State = EntityState.Modified;
             try
             {
-                await _context.SaveChangesAsync();
+                await _carfuel.PutCarFuel(id, carFuel);
+                return Ok();
             }
-            catch (DbUpdateConcurrencyException)
+            catch
             {
-                if (!CarFuelExists(id))
+                return BadRequest(new Models.Response
                 {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                    Status = "Invalid",
+                    Message = "Invalid Fuel Edit.",
+                });
             }
-            return NoContent();
         }
-
         /// <summary>
         /// 
         /// </summary>
@@ -111,62 +79,88 @@ namespace VehicleManagement.Controllers
         /// <returns></returns>
         [HttpPost]
         [Authorize(Roles = "Admin")]
-
-        public async Task<ActionResult<CarFuel>> PostCarFuel([FromForm] CarFuel carFuel)
+        public async Task<ActionResult> PostCarFuel([FromForm] CarFuel carFuel)
         {
-            carFuel.FuelImage = await SaveImage(carFuel.ImageFile);
-            _context.CarFuels.Add(carFuel);
-            await _context.SaveChangesAsync();
-            return StatusCode(201);
-
+            try
+            {
+                await _carfuel.PostCarFuel(carFuel);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest(new Models.Response
+                {
+                    Status = "Invalid",
+                    Message = "Invalid Fuel Post.",
+                });
+            }
         }
-
         /// <summary>
         /// 
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-
-        public async Task<IActionResult> DeleteCarFuel(int id)
+        public async Task<ActionResult> DeleteCarFuel(int id)
         {
-            if (_context.CarFuels == null)
+            try
             {
-                return NotFound();
+                await _carfuel.DeleteCarFuel(id);
+                return Ok();
             }
-            var carFuel = await _context.CarFuels.FindAsync(id);
-            if (carFuel == null)
+            catch
             {
-                return NotFound();
+                return BadRequest(new Models.Response
+                {
+                    Status = "Invalid",
+                    Message = "Invalid Fuel Delete.",
+                });
             }
-            DeleteImage(carFuel.FuelImage);
-            _context.CarFuels.Remove(carFuel);
-            await _context.SaveChangesAsync();
-
-            return Ok(carFuel);
         }
-
-        private bool CarFuelExists(int id)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<ActionResult> CarFuelExists(int id)
         {
-            return (_context.CarFuels?.Any(e => e.Fuelid == id)).GetValueOrDefault();
+            try
+            {
+                 _carfuel.CarFuelExists(id);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest(new Models.Response
+                {
+                    Status = "Invalid",
+                    Message = "Invalid Fuel Exists.",
+                });
+            }
         }
-
-
         /// <summary>
         /// 
         /// </summary>
         /// <param name="imageName"></param>
         [NonAction]
         [Authorize(Roles = "Admin,Customer")]
-
-        public void DeleteImage(string imageName)
+        public async Task<ActionResult> DeleteImage(string imageName)
         {
-            var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", imageName);
-            if (System.IO.File.Exists(imagePath))
-                System.IO.File.Delete(imagePath);
+            try
+            {
+                  _carfuel.DeleteImage(imageName);
+                    return Ok();
+            }
+            catch
+            {
+                return BadRequest(new Models.Response
+                {
+                    Status = "Invalid",
+                    Message = "Invalid Fuel Image Delete.",
+                });
+            }
         }
-
-
         /// <summary>
         /// 
         /// </summary>
@@ -174,16 +168,22 @@ namespace VehicleManagement.Controllers
         /// <returns></returns>
         [NonAction]
         [Authorize(Roles = "Admin,Customer")]
-        public async Task<string> SaveImage(IFormFile imageFile)
+        public async Task<ActionResult> SaveImage(IFormFile imageFile)
         {
-            string imageName = new String(Path.GetFileNameWithoutExtension(imageFile.FileName).Take(10).ToArray()).Replace(' ', '-');
-            imageName = imageName + DateTime.Now.ToString("yymmssfff") + Path.GetExtension(imageFile.FileName);
-            var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", imageName);
-            using (var fileStream = new FileStream(imagePath, FileMode.Create))
+            try
             {
-                await imageFile.CopyToAsync(fileStream);
+                await _carfuel.SaveImage(imageFile);
+                return Ok();
+
             }
-            return imageName;
+            catch
+            {
+                return BadRequest(new Models.Response
+                {
+                    Status = "Invalid",
+                    Message = "Invalid Fuel Image Save.",
+                });
+            }
         }
     }
 }

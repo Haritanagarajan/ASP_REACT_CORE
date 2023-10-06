@@ -13,7 +13,6 @@ namespace VehicleManagement.Repository
             _context = context;
             _configuration = configuration;
         }
-
         /// <summary>
         /// 
         /// </summary>
@@ -25,6 +24,5 @@ namespace VehicleManagement.Repository
             await _context.SaveChangesAsync();
             return carDetail;
         }
-
     }
 }

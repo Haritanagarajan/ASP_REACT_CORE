@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
+using Octokit;
 using VehicleManagement.Interface;
 using VehicleManagement.IRepository;
 using VehicleManagement.Models;
@@ -19,22 +21,32 @@ namespace VehicleManagement.Controllers
     {
         private readonly ICarService _servicerepo;
         private readonly VehicleManagementContext _context;
-
-
-        public CarServicesController(ICarService servicerepo)
+        public CarServicesController(ICarService servicerepo, VehicleManagementContext context)
         {
             _servicerepo = servicerepo;
+            _context = context;
         }
-
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
         [HttpGet]
         [Authorize(Roles = "Admin,Customer")]
-        public ActionResult<IEnumerable<CarService>> GetCarServices()
+        public async Task<ActionResult<IEnumerable<CarService>>> GetCarServices()
         {
-            return _servicerepo.GetCarServices();
+            try
+            {
+                var carServices = await _servicerepo.GetCarServices();
+                return Ok(carServices); 
+            }
+            catch
+            {
+                return BadRequest(new Models.Response
+                {
+                    Status = "Invalid",
+                    Message = "Invalid Service.",
+                });
+            }
         }
 
         /// <summary>
@@ -44,12 +56,22 @@ namespace VehicleManagement.Controllers
         /// <returns></returns>
         [HttpGet("{id}")]
         [Authorize(Roles = "Admin,Customer")]
-        public ActionResult<IEnumerable<CarService>> GetCarService(int id)
+        public async Task<ActionResult<IEnumerable<CarService>>> GetCarService(int id)
         {
-            return  _servicerepo.GetCarService(id);
+            try
+            {
+                var carserviceid = await _servicerepo.GetCarService(id);
+                return Ok(carserviceid);
+            }
+            catch
+            {
+                return BadRequest(new Models.Response
+                {
+                    Status = "Invalid",
+                    Message = "Invalid Service.",
+                });
+            }
         }
-
-
         /// <summary>
         /// 
         /// </summary>
@@ -58,12 +80,23 @@ namespace VehicleManagement.Controllers
         /// <returns></returns>
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
-
-        public IActionResult PutCarService(int id, CarService carService)
+        public async Task<IActionResult> PutCarService(int id, CarService carService)
         {
-            return _servicerepo.PutCarService(id, carService);
-        }
+            try
+            {
+                await _servicerepo.PutCarService(id, carService);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest(new Models.Response
+                {
+                    Status = "Invalid",
+                    Message = "Invalid Service Edit.",
+                });
 
+            }
+        }
         /// <summary>
         /// 
         /// </summary>
@@ -71,27 +104,60 @@ namespace VehicleManagement.Controllers
         /// <returns></returns>
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public ActionResult<CarService> PostCarService(CarService carService)
+        public async Task<IActionResult> PostCarService(CarService carService)
         {
-            return _servicerepo.PostCarService(carService);
+            try
+            {
+                await _servicerepo.PostCarService(carService);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest(new Models.Response
+                {
+                    Status = "Invalid",
+                    Message = "Invalid Service Post.",
+                });
+            }
         }
-
         /// <summary>
         /// 
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-
-        public IActionResult DeleteCarService(int id)
+        public async Task<IActionResult> DeleteCarService(int id)
         {
-            return _servicerepo.DeleteCarService(id);
+            try
+            {
+                await _servicerepo.DeleteCarService(id);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest(new Models.Response
+                {
+                    Status = "Invalid",
+                    Message = "Invalid Service Delete.",
+                });
+            }  
         }
-
         [HttpGet]
-        public bool CarServiceExists(int id)
+        public async Task<IActionResult> CarServiceExists(int id)
         {
-            return _servicerepo.CarServiceExists(id);
+            try
+            {
+                _servicerepo.CarServiceExists(id);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest(new Models.Response
+                {
+                    Status = "Invalid",
+                    Message = "Invalid Service Exists.",
+                });
+            }
         }
     }
 }

@@ -13,7 +13,6 @@ namespace VehicleManagement.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-
     public class RolesController : ControllerBase
     {
         private readonly VehicleManagementContext _context;
@@ -21,7 +20,6 @@ namespace VehicleManagement.Controllers
         {
             _context = context;
         }
-
         /// <summary>
         /// 
         /// </summary>
@@ -35,7 +33,6 @@ namespace VehicleManagement.Controllers
             }
             return await _context.Vroles.ToListAsync();
         }
-
         /// <summary>
         /// 
         /// </summary>
@@ -55,7 +52,6 @@ namespace VehicleManagement.Controllers
             }
             return vrole;
         }
-
         /// <summary>
         /// 
         /// </summary>
@@ -85,10 +81,8 @@ namespace VehicleManagement.Controllers
                     throw;
                 }
             }
-
             return NoContent();
         }
-
         /// <summary>
         /// 
         /// </summary>
@@ -119,7 +113,6 @@ namespace VehicleManagement.Controllers
             }
             return CreatedAtAction("GetVrole", new { id = vrole.Vroleid }, vrole);
         }
-
         /// <summary>
         /// 
         /// </summary>
@@ -141,7 +134,6 @@ namespace VehicleManagement.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
         }
-
         private bool VroleExists(int id)
         {
             return (_context.Vroles?.Any(e => e.Vroleid == id)).GetValueOrDefault();
