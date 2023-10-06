@@ -27,7 +27,7 @@ namespace VehicleManagement.Controllers
             _context = context;
         }
         /// <summary>
-        /// 
+        /// gets services
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -50,7 +50,7 @@ namespace VehicleManagement.Controllers
         }
 
         /// <summary>
-        /// 
+        /// gets services based on matching carid(addamount) += id(servicecost)
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -73,7 +73,7 @@ namespace VehicleManagement.Controllers
             }
         }
         /// <summary>
-        /// 
+        /// edits services
         /// </summary>
         /// <param name="id"></param>
         /// <param name="carService"></param>
@@ -98,7 +98,7 @@ namespace VehicleManagement.Controllers
             }
         }
         /// <summary>
-        /// 
+        /// creates services
         /// </summary>
         /// <param name="carService"></param>
         /// <returns></returns>
@@ -121,7 +121,7 @@ namespace VehicleManagement.Controllers
             }
         }
         /// <summary>
-        /// 
+        /// deleted services based on id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -142,6 +142,11 @@ namespace VehicleManagement.Controllers
                 });
             }  
         }
+        /// <summary>
+        /// checks whether services exists or not and returns bool value
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> CarServiceExists(int id)
         {

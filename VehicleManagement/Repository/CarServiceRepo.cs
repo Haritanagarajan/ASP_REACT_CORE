@@ -14,7 +14,7 @@ namespace VehicleManagement.Repository
             _context = context;
         }
         /// <summary>
-        /// 
+        /// get all the services
         /// </summary>
         /// <returns></returns>
         public async Task<IEnumerable<CarService>> GetCarServices()
@@ -22,11 +22,11 @@ namespace VehicleManagement.Repository
             return await _context.CarServices.ToListAsync();
         }
         /// <summary>
-        /// 
+        /// get all services based matching carid(addamount) += id(servicecost)
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<CarService>> GetCarService(int id)
+        public async Task<IEnumerable<CarService>> GetCarService(int id) //IEnumerable represnts list of items we can loop through collections of data
         {
             var addAmount = _context.BrandCars
                 .Select(brandCar => brandCar.AddAmount)
@@ -41,7 +41,7 @@ namespace VehicleManagement.Repository
             return service;
         }
         /// <summary>
-        /// 
+        /// edits the services
         /// </summary>
         /// <param name="id"></param>
         /// <param name="carService"></param>
@@ -52,7 +52,7 @@ namespace VehicleManagement.Repository
             await _context.SaveChangesAsync();
         }
         /// <summary>
-        /// 
+        /// creates car services
         /// </summary>
         /// <param name="carService"></param>
         /// <returns></returns>
@@ -62,7 +62,7 @@ namespace VehicleManagement.Repository
             await _context.SaveChangesAsync();
         }
         /// <summary>
-        /// 
+        /// deletes service based on id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -73,7 +73,7 @@ namespace VehicleManagement.Repository
             await _context.SaveChangesAsync();
         }
         /// <summary>
-        /// 
+        /// checks whether service id record exists or not
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>

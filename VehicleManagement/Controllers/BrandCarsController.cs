@@ -16,7 +16,6 @@ namespace VehicleManagement.Controllers
     [ApiController]
     public class BrandCarsController : ControllerBase
     {
-
         private readonly IBrandCar _brandCar;
         private readonly VehicleManagementContext _context;
         public BrandCarsController(IBrandCar brandCar, VehicleManagementContext context)

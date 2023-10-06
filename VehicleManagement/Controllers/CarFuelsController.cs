@@ -24,7 +24,7 @@ namespace VehicleManagement.Controllers
             _context = context;
         }
         /// <summary>
-        /// 
+        /// get fuel details
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -49,7 +49,7 @@ namespace VehicleManagement.Controllers
             }
         }
         /// <summary>
-        /// 
+        /// edits the details and images
         /// </summary>
         /// <param name="id"></param>
         /// <param name="carFuel"></param>
@@ -73,7 +73,7 @@ namespace VehicleManagement.Controllers
             }
         }
         /// <summary>
-        /// 
+        /// creates new fuel details
         /// </summary>
         /// <param name="carFuel"></param>
         /// <returns></returns>
@@ -96,7 +96,7 @@ namespace VehicleManagement.Controllers
             }
         }
         /// <summary>
-        /// 
+        /// deletes fuel details based on id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -118,7 +118,7 @@ namespace VehicleManagement.Controllers
             }
         }
         /// <summary>
-        /// 
+        /// checks if details exists or not
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -140,7 +140,7 @@ namespace VehicleManagement.Controllers
             }
         }
         /// <summary>
-        /// 
+        /// deleted the image if present in Images Diectory
         /// </summary>
         /// <param name="imageName"></param>
         [NonAction]
@@ -162,7 +162,7 @@ namespace VehicleManagement.Controllers
             }
         }
         /// <summary>
-        /// 
+        /// replaces spaces with hypens,timestrapm milliseconds and 10 characters unique char ,creates ,copies files and updates
         /// </summary>
         /// <param name="imageFile"></param>
         /// <returns></returns>

@@ -45,7 +45,7 @@ builder.Services.AddCors(options =>
         });
 });
 //Dependency injection
-builder.Services.AddScoped<ICarDetails, CarDetailsRepo>();
+builder.Services.AddScoped<ICarDetails, CarDetailsRepo>();//one instance is created and accessed
 builder.Services.AddScoped<ICarService, CarServiceRepo>();
 builder.Services.AddScoped<ICarFuel, CarFuelRepo>();
 builder.Services.AddScoped<ICarBrand,CarBrandRepo>();

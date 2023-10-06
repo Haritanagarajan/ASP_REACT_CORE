@@ -21,7 +21,7 @@ namespace VehicleManagement.Controllers
             _context = context;
         }
         /// <summary>
-        /// 
+        /// fetching all details in list
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -34,7 +34,7 @@ namespace VehicleManagement.Controllers
             return await _context.Vroles.ToListAsync();
         }
         /// <summary>
-        /// 
+        /// fetching details based on id 
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -53,7 +53,7 @@ namespace VehicleManagement.Controllers
             return vrole;
         }
         /// <summary>
-        /// 
+        /// edit the roles
         /// </summary>
         /// <param name="id"></param>
         /// <param name="vrole"></param>
@@ -70,7 +70,7 @@ namespace VehicleManagement.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException)//results with zero affected rows 
             {
                 if (!VroleExists(id))
                 {
@@ -84,7 +84,7 @@ namespace VehicleManagement.Controllers
             return NoContent();
         }
         /// <summary>
-        /// 
+        /// created new role
         /// </summary>
         /// <param name="vrole"></param>
         /// <returns></returns>
@@ -100,7 +100,7 @@ namespace VehicleManagement.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException) //database update error
             {
                 if (VroleExists(vrole.Vroleid))
                 {
@@ -111,10 +111,10 @@ namespace VehicleManagement.Controllers
                     throw;
                 }
             }
-            return CreatedAtAction("GetVrole", new { id = vrole.Vroleid }, vrole);
+            return CreatedAtAction("GetVrole", new { id = vrole.Vroleid }, vrole); //returns  HTTP 201 status and used in restful api(get,put,delete,post)
         }
         /// <summary>
-        /// 
+        /// deleted roles based on id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -136,7 +136,7 @@ namespace VehicleManagement.Controllers
         }
         private bool VroleExists(int id)
         {
-            return (_context.Vroles?.Any(e => e.Vroleid == id)).GetValueOrDefault();
+            return (_context.Vroles?.Any(e => e.Vroleid == id)).GetValueOrDefault(); //returns value even when hasvalue prop is false
         }
     }
 }

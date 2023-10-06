@@ -22,7 +22,6 @@ namespace VehicleManagement.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    //[Authorize]
     public class UsersController : ControllerBase
     {
         private readonly VehicleManagementContext _context;
@@ -31,7 +30,7 @@ namespace VehicleManagement.Controllers
             _context = context;
         }
         /// <summary>
-        /// 
+        /// list all users
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -45,7 +44,7 @@ namespace VehicleManagement.Controllers
             return await _context.Vusers.ToListAsync();
         }
         /// <summary>
-        /// 
+        /// fetching users based on id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -65,7 +64,7 @@ namespace VehicleManagement.Controllers
             return vuser;
         }
         /// <summary>
-        /// 
+        /// editing the user based on id
         /// </summary>
         /// <param name="id"></param>
         /// <param name="vuser"></param>
@@ -83,7 +82,7 @@ namespace VehicleManagement.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception)
             {
                 if (!VuserExists(id))
                 {
@@ -97,7 +96,7 @@ namespace VehicleManagement.Controllers
             return NoContent();
         }
         /// <summary>
-        /// 
+        /// creating user
         /// </summary>
         /// <param name="vuser"></param>
         /// <returns></returns>
@@ -132,7 +131,7 @@ namespace VehicleManagement.Controllers
             return Ok();
         }
         /// <summary>
-        /// 
+        /// deleting user based on id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -153,12 +152,17 @@ namespace VehicleManagement.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
         }
+        /// <summary>
+        /// checks whether users record exists or not return bool value true/false
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         private bool VuserExists(int id)
         {
-            return (_context.Vusers?.Any(e => e.Vuserid == id)).GetValueOrDefault();
+            return (_context.Vusers?.Any(e => e.Vuserid == id)).GetValueOrDefault(); 
         }
         /// <summary>
-        /// Procedure to Decrypt
+        /// Procedure to Decrypt and returns userid and rolename
         /// </summary>
         /// <param name="validate"></param>
         /// <returns></returns>
@@ -202,7 +206,7 @@ namespace VehicleManagement.Controllers
             }
         }
         /// <summary>
-        /// 
+        /// generates token base on the Roles(rolenames) by passing ValidateUserscs values
         /// </summary>
         /// <param name="jwtcheck"></param>
         /// <returns></returns>
